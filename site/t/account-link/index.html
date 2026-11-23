@@ -229,7 +229,7 @@ const note = (kind, title, lines, icon) => {
   return `<div class="note ${kind}"><div class="tt">${ic(icon || (kind === 'info' ? 'info' : 'warning'), col)}<span>${title}</span></div>${lines.map(l => `<p class="p">${l}</p>`).join('')}</div>`;
 };
 const pl = a => `<span class="pill"><img src="${a.icon}" alt="">${a.plat}</span>`;
-const tag = (k, t) => `<span class="tag ${k}">${ic(k === 'keep' ? 'checkCircle' : k === 'rem' ? 'trash' : 'user', '#fff')}${t}</span>`;
+const tag = (k, t, plain) => `<span class="tag ${k}"${plain ? ' style="min-width:64px;justify-content:center;padding:6px 8px"' : ''}>${plain ? '' : ic(k === 'keep' ? 'checkCircle' : k === 'rem' ? 'trash' : 'user', '#fff')}${t}</span>`;
 const identity = (a, extra = '', sub) => `<div class="row" style="gap:12px;align-items:flex-start"><img class="av" src="${a.av}" alt=""><div class="grow"><div class="nm">${a.name}</div><div class="cap">${sub || 'سطح قلعه ' + FA(a.castle) + ' · سرور ۴'}</div></div>${pl(a)}${extra}</div>`;
 const stepper = cur => `<div class="prog"><b>در تلگرام، مرحلهٔ ${FA(cur)} از ۳</b><div class="step">${['بررسی حساب‌ها','انتخاب حساب','تأیید نهایی'].map((l, i) => `<div class="${i + 1 < cur ? 'done' : i + 1 === cur ? 'on' : ''}"><i></i><span>${l}</span></div>`).join('')}</div></div>`;
 const timer = cd => `<span class="timer">${ic('clock', '#fad08c')}زمان باقی‌ماندهٔ لینک · <bdi dir="ltr" class="cd">${cd}</bdi></span>`;
@@ -253,12 +253,12 @@ function s2(c) {
   if (c.sc === 'b') {
     return frame({id:'s2', title:'حساب‌ها', body:s1Body(), sm:true, over:`<div class="dim"></div><div class="sheet sm"><div class="handle"></div><p class="h">لینک اتصال به تلگرام</p>
     <p class="p">لینک را کپی کنید و در «پیام‌های ذخیره‌شده» تلگرام برای خودتان بفرستید. آن را همان‌جا باز کنید تا پیش از تأیید، نتیجهٔ اتصال را ببینید.</p>
-    <div><div class="cap" style="text-align:center">زمان باقی‌ماندهٔ لینک</div><div class="big"><bdi dir="ltr" class="cd">${c.cd}</bdi></div></div>${linkBox()}
+    <div><div class="big"><bdi dir="ltr" class="cd">${c.cd}</bdi></div><div class="cap" style="text-align:center">زمان باقی‌ماندهٔ لینک</div></div>${linkBox()}
     ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
     ${btn('کپی لینک', 'gold', 'copy', {icon:'copy'})}${btn('بستن', 'ghost', 'back-s1')}</div>`});
   }
   return frame({id:'s2', title:'اتصال به تلگرام', sm:c.sc === 'c', body:`<div class="col"><p class="h">لینک را در تلگرام باز کنید</p><p class="p">لینک را کپی کنید و در «پیام‌های ذخیره‌شده» تلگرام برای خودتان بفرستید. آن را همان‌جا باز کنید تا حساب‌ها را ببینید و اتصال را ادامه دهید.</p></div>
-  <div class="col">${linkBox()}<div class="row">${timer(c.cd)}</div></div>
+  <div class="col">${linkBox()}<div class="row" style="justify-content:center">${timer(c.cd)}</div></div>
   ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
   ${note('info', 'اگر مهلت ۱۰ دقیقه‌ای لینک تمام شد', ['از همین صفحه می‌توانید لینک تازه‌ای بسازید.'])}`,
   foot:btn('کپی لینک', 'gold', 'copy', {icon:'copy'}) + btn('انصراف', 'ghost', 'back-s1')});
@@ -278,9 +278,9 @@ function s3(c) {
     foot:btn('رفتن به انتخاب حساب', 'gold', 'to-s4', {icon:'arrowLeft'}) + btn('انصراف', 'ghost', 'cancel')});
   }
   return frame({id:'s3', title:'اتصال حساب', sm:c.sc === 'c', body:`${stepper(1)}<div class="col"><p class="h">دو حساب بازی پیدا شد</p><p class="p">یکی حساب فعلی شما در تلگرام است و دیگری حساب بله‌ای است که لینک از آن ساخته شده.</p></div>
-  <div class="col"><p class="lbl">حساب فعلی شما در تلگرام</p><div class="card">${identity(t)}</div></div>
+  <div class="col"><p class="lbl" style="color:#fad08c">حساب فعلی شما در تلگرام</p><div class="card">${identity(t)}</div></div>
   <div class="col"><p class="lbl">حساب شما در بله</p><div class="card">${identity(m)}</div></div>`,
-  foot:btn('رفتن به انتخاب حساب', 'gold', 'to-s4', {icon:'arrowLeft'}) + btn('انصراف', 'ghost', 'cancel')});
+  foot:btn('رفتن به انتخاب حساب', 'gold', 'to-s4') + btn('انصراف', 'ghost', 'cancel')});
 }
 
 function s4(c) {
@@ -297,7 +297,7 @@ function s4(c) {
       // A value and how it changes: "۱۰٬۰۰۰ بیشتر", "۲ سطح بالاتر" or "بدون تغییر".
       const d = (v, delta, unit = 'بیشتر') => `<b>${v}</b>${delta ? `<span class="delta">${ic('up', '#3aa750', 2.5)}${delta} ${unit}</span>` : '<span class="same">بدون تغییر</span>'}`;
       const vipDelta = Math.max(K.vip, R.vip) - K.vip;
-      res = `<div class="card" style="border:2px solid #fad08c;padding:11px;gap:8px"><div class="row">${tag('gold', 'حساب شما بعد از اتصال')}</div>
+      res = `<div class="card" style="border:1px solid #fad08c;gap:8px"><div class="row">${tag('gold', 'حساب شما بعد از اتصال')}</div>
       <div class="row" style="gap:12px"><img class="av" src="${K.av}" alt=""><div class="grow"><div class="nm">${K.name}</div><div class="cap">سطح قلعه ${FA(K.castle)} · سرور ۴</div></div><span class="pill"><img src="${A.tg}" alt="">تلگرام</span><span class="pill"><img src="${A.bale}" alt="">بله</span></div>
       <div class="stats"><div class="stat"><i>سطح VIP</i>${d(FA(Math.max(K.vip, R.vip)), vipDelta ? FA(vipDelta) : 0, 'سطح بالاتر')}</div><div class="stat"><i>سکه</i>${d(nf(K.coins + R.coins), nf(R.coins))}</div><div class="stat"><i>اسکین بازشده</i>${d(FA(K.skins + R.skins), FA(R.skins))}</div>
       <div class="stat"><i>صف لشکرکشی</i>${d(FA(Math.max(K.queues, R.queues)), Math.max(K.queues, R.queues) - K.queues ? FA(Math.max(K.queues, R.queues) - K.queues) : 0)}</div><div class="stat"><i>سازنده</i>${d(FA(Math.max(K.builders, R.builders)), Math.max(K.builders, R.builders) - K.builders ? FA(Math.max(K.builders, R.builders) - K.builders) : 0)}</div><div class="stat"><i>قدرت</i>${d(K.power, 0)}</div></div></div>`;
@@ -316,7 +316,7 @@ function s4(c) {
   ${card(ACC.tg)}${card(ACC.bale)}
   <div class="note" style="border-color:#927f61"><div class="tt" style="color:#fad08c">${ic('merge', '#fad08c')}<span>این موارد در هر صورت در حساب انتخابی می‌مانند</span></div>
   <div class="row" style="flex-wrap:wrap;gap:4px">${['سطح VIP بالاتر (۳)', 'مجموع سکه‌ها (۱۹٬۱۰۰)', 'اسکین‌های بازشده (۶)', 'صف لشکرکشی اضافه', 'سازندهٔ دوم'].map(t => `<span class="chip">${ic('check', '#3aa750')}${t}</span>`).join('')}</div></div>`,
-  foot:btn(sel ? 'رفتن به تأیید نهایی' : 'یک حساب را انتخاب کنید', 'gold', 'to-s5', {icon:sel ? 'arrowLeft' : null, dis:!sel}) + btn('انصراف', 'ghost', 'cancel')});
+  foot:btn(sel ? 'رفتن به تأیید نهایی' : 'یک حساب را انتخاب کنید', 'gold', 'to-s5', {dis:!sel}) + btn('انصراف', 'ghost', 'cancel')});
 }
 
 function s5(c) {
@@ -327,9 +327,9 @@ function s5(c) {
     <div class="card" style="padding:16px;gap:16px">${item('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند.`, 'می‌توانید با آن در بله و تلگرام بازی کنید.')}<div class="div"></div>
     ${K.k === 'tg' ? item('#4f422d', 'merge', '#fad08c', `حساب ${K.name} این موارد را از ${R.name} می‌گیرد.`, `${nf(R.coins)} سکه، ${FA(R.skins)} اسکین بازشده، یک صف لشکرکشی اضافه و سازندهٔ دوم.`)
       : item('#4f422d', 'merge', '#fad08c', `${nf(R.coins)} سکه و ${FA(R.skins)} اسکین بازشده از ${R.name} به ${K.name} اضافه می‌شود.`, `سطح VIP هم به ${FA(Math.max(K.vip, R.vip))} می‌رسد.`)}<div class="div"></div>
-    ${item('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} حذف می‌شود.`, 'قلعه، ساختمان‌ها، نیروها و منابعش را هم از دست می‌دهید.', '#ff9533')}
-    ${item('#8d1f1f', 'noUndo', '#fff', 'این اتصال برگشت ندارد.', `بعد از اتصال، نمی‌توانید حساب‌ها را از هم جدا کنید یا حساب ${R.name} را برگردانید.`, '#e8313f', 'border:1px solid #df403d;border-radius:8px;padding:12px')}</div>`,
-    foot:`<div class="hold" id="hold" role="button" tabindex="0"><div class="fill"></div>${ic('touch', '#fff')}<span>برای اتصال و حذف ${R.name}، ۲ ثانیه نگه دارید</span></div>` + btn('انصراف', 'ghost', 'cancel')});
+    ${item('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} حذف می‌شود.`, 'قلعه، ساختمان‌ها، نیروها و منابعش را هم از دست می‌دهید.')}<div class="div"></div>
+    ${item('#8d1f1f', 'noUndo', '#fff', 'این اتصال برگشت ندارد.', `بعد از اتصال، نمی‌توانید حساب‌ها را از هم جدا کنید یا حساب ${R.name} را برگردانید.`, '#e8313f')}</div>`,
+    foot:`<div class="hold" id="hold" role="button" tabindex="0"><div class="fill"></div>${ic('touch', '#fff')}<span>برای اتصال و حذف ${R.name}\u200f، ۲ ثانیه نگه دارید</span></div>` + btn('انصراف', 'ghost', 'cancel')});
   }
   if (c.sc === 'c') {
     const all = c.checks.every(Boolean);
@@ -344,8 +344,8 @@ function s5(c) {
     foot:btn('اتصال و حذف ' + R.name, 'red', 'confirm', {dis:!all}) + btn('انصراف', 'ghost', 'cancel')});
   }
   return frame({id:'s5', title:'تأیید نهایی', gap:'g12', body:`${stepper(3)}<p class="h">کدام حساب می‌ماند و کدام حذف می‌شود؟</p>
-  <div class="card"><div class="row"><span class="p grow" style="color:#fff">بعد از اتصال می‌توانید با حساب ${K.name} در بله و تلگرام بازی کنید.</span>${tag('keep', 'می‌ماند')}</div><div class="div"></div>
-  <div class="row"><span class="p grow" style="color:#fff">حساب ${R.name} و قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شوند.</span>${tag('rem', 'حذف می‌شود')}</div></div>
+  <div class="card"><div class="row"><span class="p grow" style="color:#fff">بعد از اتصال می‌توانید با حساب ${K.name} در بله و تلگرام بازی کنید.</span>${tag('keep', 'می‌ماند', 1)}</div><div class="div"></div>
+  <div class="row"><span class="p grow" style="color:#fff">حساب ${R.name} و قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شوند.</span>${tag('rem', 'حذف می‌شود', 1)}</div></div>
   <div class="col"><p class="lbl">مواردی که در حساب ${K.name} می‌مانند</p>${['سطح VIP بالاتر', 'مجموع سکه‌ها', 'اسکین‌های بازشدهٔ هر دو حساب', 'صف لشکرکشی اضافه و سازندهٔ دوم'].map(t => `<div class="row">${ic('check', '#3aa750')}<span class="p">${t}</span></div>`).join('').replace(/<svg /g, '<svg style="width:16px;height:16px" ')}</div>
   ${note('danger', 'این اتصال برگشت ندارد', [`بعد از اتصال، نمی‌توانید حساب‌ها را از هم جدا کنید یا حساب ${R.name} را برگردانید.`])}`,
   foot:btn('اتصال و حذف ' + R.name, 'red', 'confirm') + btn('انصراف', 'ghost', 'cancel')});
