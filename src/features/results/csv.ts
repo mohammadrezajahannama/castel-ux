@@ -7,6 +7,7 @@ const cell = (value: unknown) => {
   return `"${safe.replace(/"/g, '""')}"`;
 };
 
+// Answers in the v2 numbering (normalizeRun reads older runs the same way).
 const COLUMNS: [string, (row: RunRow) => unknown][] = [
   ["run_id", (r) => r.runId],
   ["received_at", (r) => r.receivedAt],
@@ -27,19 +28,19 @@ const COLUMNS: [string, (row: RunRow) => unknown][] = [
   ["disabled_taps", (r) => r.run.disabledTaps],
   ["hold_attempts", (r) => r.run.holdAttempts],
   ["screens_reached", (r) => (r.run.reached ?? []).join(" > ")],
-  ["q1", (r) => r.run.answers?.q1],
+  ["q1_other_account", (r) => r.run.answers?.q1],
   ["q1_ok", (r) => r.run.score?.q1],
-  ["q2", (r) => r.run.answers?.q2],
+  ["q2_can_separate", (r) => r.run.answers?.q2],
   ["q2_ok", (r) => r.run.score?.q2],
-  ["q3", (r) => r.run.answers?.q3],
+  ["q3_shared_link", (r) => r.run.answers?.q3],
   ["q3_ok", (r) => r.run.score?.q3],
-  ["q4", (r) => r.run.answers?.q4],
-  ["q4_ok", (r) => r.run.score?.q4],
-  ["comprehension_of_4", (r) => r.comprehension],
-  ["confidence_q5", (r) => r.confidence],
-  ["difficulty_q6", (r) => r.difficulty],
+  ["comprehension_of_3", (r) => r.comprehension],
+  ["understood_2_of_3", (r) => r.understood],
+  ["misconception_moved_not_deleted", (r) => r.misconception],
+  ["confidence_q4", (r) => r.confidence],
+  ["difficulty_q5", (r) => r.difficulty],
   ["confident_but_wrong", (r) => r.confidentWrong],
-  ["comment_q7", (r) => r.comment],
+  ["comment_q6", (r) => r.comment],
 ];
 
 /** Downloads the runs as a CSV file (UTF-8 with a BOM, so Excel reads the Persian text). */

@@ -25,8 +25,13 @@ export interface AccountLinkRun {
   times: Record<string, number>;
   clicks: { s: string; x: number; y: number; a: string; t: number; sel: string }[];
   moves: Record<string, Record<string, number>>;
-  answers: { q1: string; q2: string; q3: string; q4: string; q5: number; q6: number; q7: string } | null;
-  score: { q1: boolean; q2: boolean; q3: boolean; q4: boolean; comp: number } | null;
+  /**
+   * v2 (and v1 runs read as v2, see normalizeRun): q1 what happened to the other account, q2 can they be separated,
+   * q3 what a shared link does, q4 confidence (1–5), q5 difficulty (1–5), q6 where they hesitated.
+   */
+  answers: { q1: string; q2: string; q3: string; q4: number; q5: number; q6: string } | null;
+  /** Right answers to q1–q3, and how many (`comp`, of 3). */
+  score: { q1: boolean; q2: boolean; q3: boolean; comp: number } | null;
 }
 
 /** Where a run came from. */
@@ -45,10 +50,15 @@ export interface RunRow {
   success: boolean;
   /** Confirmed, but kept the weaker castle: an irreversible mistake. */
   wrongSuccess: boolean;
+  /** Comprehension questions right, of 3. */
   comprehension: number | null;
+  /** At least 2 of the 3 comprehension questions right. */
+  understood: boolean;
+  /** Answered "moved over, and the account still exists" to q1: the misconception the test looks for. */
+  misconception: boolean;
   confidence: number | null;
   difficulty: number | null;
-  /** High confidence (4–5) with half or less of the comprehension questions right. */
+  /** High confidence (4–5), but fewer than 2 of the 3 comprehension questions right. */
   confidentWrong: boolean;
   /** Milliseconds from start to the task's end screen. */
   taskTime: number;

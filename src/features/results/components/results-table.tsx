@@ -80,7 +80,8 @@ const stats: TableStat[] = [
   { key: "runs", label: m.results_stat_runs },
   { key: "success", label: m.results_stat_success },
   { key: "wrongSuccess", label: m.results_stat_wrong },
-  { key: "comprehension", label: m.results_stat_comprehension },
+  { key: "understood", label: m.results_stat_understood },
+  { key: "misconception", label: m.results_stat_misconception },
   { key: "confidentWrong", label: m.results_stat_confident_wrong },
   { key: "medianTime", label: m.results_stat_time },
 ];
@@ -134,7 +135,7 @@ export const ResultsTable = () => {
         accessorKey: "comprehension",
         header: m.results_comprehension(),
         enableSorting: true,
-        cell: ({ row }) => score(row.original.comprehension, 4),
+        cell: ({ row }) => score(row.original.comprehension, 3),
         size: 110,
         meta: { align: "end" },
       },

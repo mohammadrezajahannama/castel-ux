@@ -537,12 +537,12 @@ const Test = (() => {
   }
   function record() {
     const t = {...S.times}; if (S.screen && S.screen !== 'questions') t[S.screen] = (t[S.screen] || 0) + (Date.now() - S.enterAt);
-    const ans = S.answers, sc = ans ? {q1:ans.q1 === 'deleted', q2:ans.q2 === 'coins', q3:ans.q3 === 'no', q4:ans.q4 === 'connect'} : null;
-    return {v:1, test:'account-link', id:S.id, scenario:S.scenario, assigned:S.assigned, device:S.device, vw:S.vw, startedAt:S.startedAt, updatedAt:Date.now(),
+    const ans = S.answers, sc = ans ? {q1:ans.q1 === 'deleted', q2:ans.q2 === 'no', q3:ans.q3 === 'connect'} : null;
+    return {v:2, test:'account-link', id:S.id, scenario:S.scenario, assigned:S.assigned, device:S.device, vw:S.vw, startedAt:S.startedAt, updatedAt:Date.now(),
       outcome:S.outcome, endScreen:S.endScreen, finished:!!ans, choice:S.choice, choiceCorrect:S.choice ? S.choice === 'tg' : null,
       cancels:S.cancels, backs:S.backs, restarts:S.restarts, holdAttempts:S.holdAttempts, disabledTaps:S.disabledTaps,
       reached:S.reached, times:t, clicks:S.clicks, moves:S.moves, answers:ans,
-      score:sc ? {...sc, comp:[sc.q1, sc.q2, sc.q3, sc.q4].filter(Boolean).length} : null};
+      score:sc ? {...sc, comp:[sc.q1, sc.q2, sc.q3].filter(Boolean).length} : null};
   }
   let uid = null, marked = false;
   function persist() {
@@ -567,20 +567,19 @@ const Test = (() => {
     <h1 style="font-size:26px;margin:0 0 4px">چند سؤال کوتاه</h1><p style="color:#aeaeae;margin:0 0 8px">جواب درست یا غلط دربارهٔ تو نیست؛ دربارهٔ طراحی است. اگر مطمئن نیستی، «نمی‌دانم» را بزن.</p>
     ${S.outcome === 'cancelled' ? '<div class="goal" style="margin:8px 0">تو اتصال را لغو کردی. به سؤال‌ها طوری جواب بده که انگار اتصال را تأیید کرده بودی.</div>' : ''}
     <div class="q"><h3>۱. بعد از اتصال، با حساب ${R.name} چه اتفاقی افتاد؟</h3>${radio('q1', [['deleted', `حساب ${R.name} برای همیشه حذف شد`], ['transfer_kept', `بعضی چیزهایش به ${K.name} منتقل شد و خود حساب ${R.name} هنوز وجود دارد`], ['unchanged', `بدون تغییر در ${R.plat} باقی ماند`], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۲. کدام مورد از ${R.name} به ${K.name} رسید؟</h3>${radio('q2', [['coins', 'سکه'], ['castle', 'قلعه'], ['troops', 'نیروها'], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۳. اگر پشیمان شوی، می‌توانی حساب‌ها را دوباره جدا کنی؟</h3>${radio('q3', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۴. اگر لینک اتصال را برای کس دیگری بفرستی، چه می‌شود؟</h3>${radio('q4', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط می‌تواند اطلاعات حسابم را ببیند'], ['connect', 'می‌تواند حساب من را به حساب خودش وصل کند'], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۵. قبل از زدن دکمهٔ آخر، چقدر مطمئن بودی چه اتفاقی می‌افتد؟</h3>${scale('q5', 'اصلاً مطمئن نبودم', 'کاملاً مطمئن بودم')}</div>
-    <div class="q"><h3>۶. انجام این کار چقدر سخت یا آسان بود؟</h3>${scale('q6', 'خیلی آسان', 'خیلی سخت')}</div>
-    <div class="q"><h3>۷. کجا مکث کردی یا مطمئن نبودی چه کار کنی؟</h3><p class="hint">اختیاری</p><textarea name="q7" maxlength="1000"></textarea></div>
-    <div id="qerr" class="err hide">لطفاً به سؤال‌های ۱ تا ۶ جواب بده.</div>
+    <div class="q"><h3>۲. اگر پشیمان شوی، می‌توانی حساب‌ها را دوباره جدا کنی؟</h3>${radio('q2', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']])}</div>
+    <div class="q"><h3>۳. اگر لینک اتصال را برای کس دیگری بفرستی، چه می‌شود؟</h3>${radio('q3', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط می‌تواند اطلاعات حسابم را ببیند'], ['connect', 'می‌تواند حساب من را به حساب خودش وصل کند'], ['dk', 'نمی‌دانم']])}</div>
+    <div class="q"><h3>۴. قبل از زدن دکمهٔ آخر، چقدر مطمئن بودی چه اتفاقی می‌افتد؟</h3>${scale('q4', 'اصلاً مطمئن نبودم', 'کاملاً مطمئن بودم')}</div>
+    <div class="q"><h3>۵. انجام این کار چقدر سخت یا آسان بود؟</h3>${scale('q5', 'خیلی آسان', 'خیلی سخت')}</div>
+    <div class="q"><h3>۶. کجا مکث کردی یا مطمئن نبودی چه کار کنی؟</h3><p class="hint">اختیاری</p><textarea name="q6" maxlength="1000"></textarea></div>
+    <div id="qerr" class="err hide">لطفاً به سؤال‌های ۱ تا ۵ جواب بده.</div>
     <div style="margin-top:16px"><button class="cta" type="submit">ثبت جواب‌ها</button></div></form></div>`;
     scrollTo(0, 0);
     document.getElementById('qf').addEventListener('submit', async e => {
       e.preventDefault(); const f = new FormData(e.target); const a = {};
-      for (const k of ['q1', 'q2', 'q3', 'q4', 'q5', 'q6']) a[k] = f.get(k);
+      for (const k of ['q1', 'q2', 'q3', 'q4', 'q5']) a[k] = f.get(k);
       if (Object.values(a).some(v => !v)) { document.getElementById('qerr').classList.remove('hide'); return; }
-      a.q5 = +a.q5; a.q6 = +a.q6; a.q7 = (f.get('q7') || '').trim(); S.answers = a; S.finishedAt = Date.now();
+      a.q4 = +a.q4; a.q5 = +a.q5; a.q6 = (f.get('q6') || '').trim(); S.answers = a; S.finishedAt = Date.now();
       e.target.querySelector('button[type=submit]').disabled = true;
       await caps; const ok = await persist();
       done(ok);
@@ -658,8 +657,15 @@ const Admin = (() => {
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; sel = null; draw(); });
     document.getElementById('refresh').onclick = () => { if (host && host.refresh) host.refresh().then(load); else load(); };
   }
+  // Runs from before the question change (v1: 7 questions, 4 on comprehension) read as v2 (6 questions, 3 on comprehension).
+  const toV2 = r => {
+    if ((r.v || 1) >= 2 || !r.answers) return r;
+    const a = r.answers, s = r.score || {};
+    const score = {q1:!!s.q1, q2:!!s.q3, q3:!!s.q4}; score.comp = [score.q1, score.q2, score.q3].filter(Boolean).length;
+    return {...r, v:2, answers:{q1:a.q1, q2:a.q3, q3:a.q4, q4:a.q5, q5:a.q6, q6:a.q7 || ''}, score};
+  };
   const data = () => {
-    const seen = new Set(); const all = [...ALL, ...local].filter(r => r && r.id && !seen.has(r.id) && seen.add(r.id));
+    const seen = new Set(); const all = [...ALL, ...local].map(toV2).filter(r => r && r.id && !seen.has(r.id) && seen.add(r.id));
     return all.filter(r => (F.sc === 'all' || r.scenario === F.sc) && (F.dev === 'all' || r.device === F.dev) &&
       (F.st === 'all' || (F.st === 'done' ? r.finished : r.outcome === F.st)));
   };
@@ -671,14 +677,14 @@ const Admin = (() => {
     return {n:rows.length, fin:fin.length,
       completion:share(rows, r => r.outcome === 'completed'),
       choice:share(rows.filter(r => r.choice), r => r.choiceCorrect),
-      comp:mean(fin.map(r => r.score.comp)), comp3:share(fin, r => r.score.comp >= 3),
-      q1:share(fin, r => r.score.q1), q2:share(fin, r => r.score.q2), q3:share(fin, r => r.score.q3), q4:share(fin, r => r.score.q4),
+      comp:mean(fin.map(r => r.score.comp)), comp3:share(fin, r => r.score.comp >= 2),
+      q1:share(fin, r => r.score.q1), q2:share(fin, r => r.score.q2), q3:share(fin, r => r.score.q3),
       miscon:share(fin, r => r.answers.q1 === 'transfer_kept'),
-      conf:mean(fin.map(r => r.answers.q5)), ease:mean(fin.map(r => r.answers.q6)),
-      confWrong:share(fin, r => r.answers.q5 >= 4 && r.score.comp <= 2),
+      conf:mean(fin.map(r => r.answers.q4)), ease:mean(fin.map(r => r.answers.q5)),
+      confWrong:share(fin, r => r.answers.q4 >= 4 && r.score.comp < 2),
       time:median(rows.filter(r => r.outcome !== 'abandoned').map(r => Object.values(r.times || {}).reduce((x, y) => x + y, 0) / 1000))};
   }
-  const CRIT = [['comp3', 'فهم: دست‌کم ۳ از ۴', 0.8, 'ge'], ['q3', 'برگشت‌ناپذیری (سؤال ۳)', 0.9, 'ge'], ['choice', 'انتخاب درست حساب', 0.9, 'ge'], ['completion', 'تکمیل اتصال', 0.9, 'ge'], ['ease', 'سختی (۱ آسان، ۵ سخت)', 2, 'le']];
+  const CRIT = [['comp3', 'فهم: دست‌کم ۲ از ۳', 0.8, 'ge'], ['q2', 'برگشت‌ناپذیری (سؤال ۲)', 0.9, 'ge'], ['choice', 'انتخاب درست حساب', 0.9, 'ge'], ['completion', 'تکمیل اتصال', 0.9, 'ge'], ['ease', 'سختی (۱ آسان، ۵ سخت)', 2, 'le']];
   function draw() {
     if (!document.getElementById('view')) return;
     app.querySelectorAll('.seg[data-f]').forEach(s => s.querySelectorAll('button').forEach(b => b.classList.toggle('on', F[s.dataset.f] === b.dataset.v)));
@@ -692,22 +698,22 @@ const Admin = (() => {
     if (!rows.length) { v.innerHTML = `<div class="empty">هنوز جلسه‌ای با این فیلترها ثبت نشده. لینک‌های تست در زبانهٔ «افزودن کد و لینک‌ها» است.</div>`; return; }
     const all = metrics(rows);
     const per = SC.map(s => [s, metrics(rows.filter(r => r.scenario === s))]);
-    const score = m => m.fin ? (m.comp3 || 0) * 3 + (m.q3 || 0) + (m.choice || 0) + (m.completion || 0) - (m.confWrong || 0) : -1;
+    const score = m => m.fin ? (m.comp3 || 0) * 3 + (m.q2 || 0) + (m.choice || 0) + (m.completion || 0) - (m.confWrong || 0) : -1;
     const ranked = per.filter(([, m]) => m.fin >= 1).sort((x, y) => score(y[1]) - score(x[1]));
     const win = ranked.length > 1 ? ranked[0][0] : null;
     const cls = (val, th, dir) => !isFinite(val) ? '' : (dir === 'ge' ? val >= th : val <= th) ? 'ok' : 'bad';
     const fmtv = (k, val) => k === 'ease' || k === 'conf' || k === 'comp' ? (isFinite(val) ? FA(val.toFixed(1)) : '—') : pct(val);
     v.innerHTML = `<div class="kpis">
       <div class="kpi"><i>جلسه‌ها</i><b>${FA(all.n)}</b><span class="mini">${FA(all.fin)} نفر به سؤال‌ها جواب داده‌اند</span></div>
-      <div class="kpi"><i>فهم دست‌کم ۳ از ۴</i><b>${pct(all.comp3)}</b><span class="mini">هدف ۸۰٪</span></div>
+      <div class="kpi"><i>فهم دست‌کم ۲ از ۳</i><b>${pct(all.comp3)}</b><span class="mini">هدف ۸۰٪</span></div>
       <div class="kpi"><i>«انتقال بدون حذف» (برداشت غلط)</i><b class="${all.miscon > 0.2 ? 'bad' : ''}">${pct(all.miscon)}</b><span class="mini">گزینهٔ ۲ سؤال ۱</span></div>
-      <div class="kpi"><i>مطمئن ولی اشتباه</i><b class="${all.confWrong > 0.1 ? 'bad' : ''}">${pct(all.confWrong)}</b><span class="mini">اطمینان ۴ یا ۵، فهم ۲ یا کمتر</span></div>
+      <div class="kpi"><i>مطمئن ولی اشتباه</i><b class="${all.confWrong > 0.1 ? 'bad' : ''}">${pct(all.confWrong)}</b><span class="mini">اطمینان ۴ یا ۵، فهم کمتر از ۲ از ۳</span></div>
       <div class="kpi"><i>زمان میانهٔ تسک</i><b>${isFinite(all.time) ? FA(Math.round(all.time)) + ' ث' : '—'}</b></div></div>
     <h2 style="font-size:20px;margin:24px 0 4px">${win ? 'سناریوی جلوتر: ' + SC_NAME[win] : 'مقایسهٔ سناریوها'}</h2>
     <p class="mini" style="margin:0 0 12px">${win ? 'رتبه بر اساس فهم (وزن بیشتر)، برگشت‌ناپذیری، انتخاب درست و تکمیل، منهای «مطمئن ولی اشتباه». با کمتر از ۱۵ نفر در هر سناریو، نتیجه فقط جهت را نشان می‌دهد.' : 'برای مقایسه، دست‌کم دو سناریو باید جواب داشته باشند.'}</p>
     <div class="grid3">${per.map(([s, m]) => `<div class="sc ${s === win ? 'win' : ''}"><h3 style="color:${COL[s]}">${SC_NAME[s]}</h3><div class="n">${FA(m.n)} جلسه · ${FA(m.fin)} جواب کامل${m.fin && m.fin < 15 ? ' · نمونه کم' : ''}</div>
       ${CRIT.map(([k, t, th, dir]) => `<div class="mrow"><span>${t}</span><b class="${cls(m[k], th, dir)}">${fmtv(k, m[k])}</b></div>`).join('')}
-      ${[['q1', 'فهم حذف حساب (س۱)'], ['q2', 'فهم انتقال (س۲)'], ['q4', 'فهم خطر لینک (س۴)'], ['miscon', 'انتقال بدون حذف (غلط)'], ['confWrong', 'مطمئن ولی اشتباه'], ['conf', 'اطمینان (۱ تا ۵)']].map(([k, t]) => `<div class="mrow"><span>${t}</span><b>${fmtv(k, m[k])}</b></div>`).join('')}
+      ${[['q1', 'فهم حذف حساب (س۱)'], ['q3', 'فهم خطر لینک (س۳)'], ['miscon', 'انتقال بدون حذف (غلط)'], ['confWrong', 'مطمئن ولی اشتباه'], ['conf', 'اطمینان (۱ تا ۵)']].map(([k, t]) => `<div class="mrow"><span>${t}</span><b>${fmtv(k, m[k])}</b></div>`).join('')}
       <div class="mrow"><span>میانهٔ زمان</span><b>${isFinite(m.time) ? FA(Math.round(m.time)) + ' ثانیه' : '—'}</b></div></div>`).join('')}</div>`;
   }
   function barsFor(title, opts, key, correct) {
@@ -721,14 +727,13 @@ const Admin = (() => {
   }
   function qTab(v) {
     if (!data().some(r => r.finished)) { v.innerHTML = `<div class="empty">هنوز کسی به سؤال‌ها جواب نداده.</div>`; return; }
-    const texts = data().filter(r => r.finished && r.answers.q7);
+    const texts = data().filter(r => r.finished && r.answers.q6);
     v.innerHTML = barsFor('۱. بعد از اتصال، با حسابی که انتخاب نشد چه اتفاقی افتاد؟', [['deleted', 'برای همیشه حذف شد'], ['transfer_kept', 'بعضی چیزهایش منتقل شد و خود حساب هنوز هست'], ['unchanged', 'بدون تغییر باقی ماند'], ['dk', 'نمی‌دانم']], 'q1', 'deleted')
-      + barsFor('۲. کدام مورد منتقل شد؟', [['coins', 'سکه'], ['castle', 'قلعه'], ['troops', 'نیروها'], ['dk', 'نمی‌دانم']], 'q2', 'coins')
-      + barsFor('۳. می‌توانی حساب‌ها را دوباره جدا کنی؟', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']], 'q3', 'no')
-      + barsFor('۴. اگر لینک را برای کس دیگری بفرستی؟', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط اطلاعات را می‌بیند'], ['connect', 'حساب را به حساب خودش وصل می‌کند'], ['dk', 'نمی‌دانم']], 'q4', 'connect')
-      + barsFor('۵. اطمینان قبل از دکمهٔ آخر (۱ اصلاً، ۵ کاملاً)', [1, 2, 3, 4, 5].map(n => [n, FA(n)]), 'q5')
-      + barsFor('۶. سختی (۱ خیلی آسان، ۵ خیلی سخت)', [1, 2, 3, 4, 5].map(n => [n, FA(n)]), 'q6')
-      + `<div class="qblock"><h3>۷. جاهایی که مکث کردند (${FA(texts.length)})</h3>${texts.length ? texts.map(r => `<div class="mrow" style="display:block"><b style="color:${COL[r.scenario]}">${r.scenario.toUpperCase()}</b> · <span>${esc(r.answers.q7)}</span></div>`).join('') : '<p class="mini">جوابی نیامده.</p>'}</div>`;
+      + barsFor('۲. می‌توانی حساب‌ها را دوباره جدا کنی؟', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']], 'q2', 'no')
+      + barsFor('۳. اگر لینک را برای کس دیگری بفرستی؟', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط اطلاعات را می‌بیند'], ['connect', 'حساب را به حساب خودش وصل می‌کند'], ['dk', 'نمی‌دانم']], 'q3', 'connect')
+      + barsFor('۴. اطمینان قبل از دکمهٔ آخر (۱ اصلاً، ۵ کاملاً)', [1, 2, 3, 4, 5].map(n => [n, FA(n)]), 'q4')
+      + barsFor('۵. سختی (۱ خیلی آسان، ۵ خیلی سخت)', [1, 2, 3, 4, 5].map(n => [n, FA(n)]), 'q5')
+      + `<div class="qblock"><h3>۶. جاهایی که مکث کردند (${FA(texts.length)})</h3>${texts.length ? texts.map(r => `<div class="mrow" style="display:block"><b style="color:${COL[r.scenario]}">${r.scenario.toUpperCase()}</b> · <span>${esc(r.answers.q6)}</span></div>`).join('') : '<p class="mini">جوابی نیامده.</p>'}</div>`;
   }
   function funnel(v) {
     const rows = data(); if (!rows.length) { v.innerHTML = `<div class="empty">داده‌ای نیست.</div>`; return; }
@@ -782,24 +787,24 @@ const Admin = (() => {
     <div class="scroll"><table><thead><tr><th>زمان</th><th>سناریو</th><th>دستگاه</th><th>وضعیت</th><th>انتخاب</th><th>فهم</th><th>اطمینان</th><th>سختی</th><th>مدت</th></tr></thead><tbody>
     ${rows.map(r => `<tr data-id="${esc(r.id)}"><td class="n">${new Date(r.startedAt).toLocaleString('fa-IR', {dateStyle:'short', timeStyle:'short'})}</td><td><b style="color:${COL[r.scenario]}">${r.scenario.toUpperCase()}</b></td><td>${r.device === 'desktop' ? 'دسکتاپ' : 'موبایل'}</td>
     <td>${oc[r.outcome] || r.outcome}${r.finished ? '' : ' · بی‌جواب'}</td><td>${r.choice ? ACC[r.choice].name + (r.choiceCorrect ? ' <span class="ok">✓</span>' : ' <span class="bad">✗</span>') : '—'}</td>
-    <td class="n">${r.score ? FA(r.score.comp) + '/۴' : '—'}</td><td class="n">${r.answers ? FA(r.answers.q5) : '—'}</td><td class="n">${r.answers ? FA(r.answers.q6) : '—'}</td>
+    <td class="n">${r.score ? FA(r.score.comp) + '/۳' : '—'}</td><td class="n">${r.answers ? FA(r.answers.q4) : '—'}</td><td class="n">${r.answers ? FA(r.answers.q5) : '—'}</td>
     <td class="n">${FA(Math.round(Object.values(r.times || {}).reduce((a, b) => a + b, 0) / 1000))} ث</td></tr>`).join('')}</tbody></table></div><div id="det"></div>`;
     v.querySelectorAll('tbody tr').forEach(tr => tr.onclick = () => { sel = tr.dataset.id; detail(rows.find(r => r.id === sel)); });
     if (sel) detail(rows.find(r => r.id === sel));
     document.getElementById('csv').onclick = async () => {
-      const head = ['id', 'scenario', 'device', 'outcome', 'endScreen', 'choice', 'choiceCorrect', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'comp', 'cancels', 'backs', 'restarts', 'holdAttempts', 'seconds', 'q7'];
-      const line = r => [r.id, r.scenario, r.device, r.outcome, r.endScreen, r.choice, r.choiceCorrect, ...(r.answers ? [r.answers.q1, r.answers.q2, r.answers.q3, r.answers.q4, r.answers.q5, r.answers.q6] : ['', '', '', '', '', '']), r.score ? r.score.comp : '', r.cancels, r.backs, r.restarts, r.holdAttempts, Math.round(Object.values(r.times || {}).reduce((a, b) => a + b, 0) / 1000), r.answers ? r.answers.q7 : ''].map(x => `"${String(x ?? '').replace(/"/g, '""')}"`).join(',');
+      const head = ['id', 'scenario', 'device', 'outcome', 'endScreen', 'choice', 'choiceCorrect', 'q1', 'q2', 'q3', 'q4', 'q5', 'comp', 'cancels', 'backs', 'restarts', 'holdAttempts', 'seconds', 'q6'];
+      const line = r => [r.id, r.scenario, r.device, r.outcome, r.endScreen, r.choice, r.choiceCorrect, ...(r.answers ? [r.answers.q1, r.answers.q2, r.answers.q3, r.answers.q4, r.answers.q5] : ['', '', '', '', '']), r.score ? r.score.comp : '', r.cancels, r.backs, r.restarts, r.holdAttempts, Math.round(Object.values(r.times || {}).reduce((a, b) => a + b, 0) / 1000), r.answers ? r.answers.q6 : ''].map(x => `"${String(x ?? '').replace(/"/g, '""')}"`).join(',');
       const csv = [head.join(','), ...rows.map(line)].join('\n');
       try { await navigator.clipboard.writeText(csv); document.getElementById('csvm').textContent = 'کپی شد؛ در Sheets یا Excel بچسبان.'; } catch (e) { document.getElementById('csvm').textContent = 'مرورگر اجازهٔ کپی نداد.'; }
     };
   }
   function detail(r) {
     const d = document.getElementById('det'); if (!r || !d) return;
-    const qa = r.answers ? [['س۱', r.answers.q1, r.score.q1], ['س۲', r.answers.q2, r.score.q2], ['س۳', r.answers.q3, r.score.q3], ['س۴', r.answers.q4, r.score.q4]] : [];
+    const qa = r.answers ? [['س۱', r.answers.q1, r.score.q1], ['س۲', r.answers.q2, r.score.q2], ['س۳', r.answers.q3, r.score.q3]] : [];
     d.innerHTML = `<div class="drawer"><h3>جلسهٔ ${esc(r.id)} · ${SC_NAME[r.scenario]}</h3>
-    <p class="mini">${r.assigned === 'link' ? 'سناریو از لینک' : 'سناریو تصادفی'} · عرض صفحه ${FA(r.vw)} · صفحه‌های دیده‌شده: ${(r.reached || []).join('، ')}</p>
-    ${qa.length ? `<div class="kpis">${qa.map(([t, a, ok]) => `<div class="kpi"><i>${t}</i><b class="${ok ? 'ok' : 'bad'}" style="font-size:18px">${esc(ANS[a] || a)}</b></div>`).join('')}<div class="kpi"><i>اطمینان / سختی</i><b style="font-size:18px">${FA(r.answers.q5)} / ${FA(r.answers.q6)}</b></div></div>
-    ${r.answers.q7 ? `<p style="margin-top:12px">«${esc(r.answers.q7)}»</p>` : ''}` : '<p class="mini">این نفر به سؤال‌ها نرسید.</p>'}
+    <p class="mini">${r.assigned === 'link' ? 'سناریو از لینک' : r.assigned === 'balanced' ? 'سناریو تصادفی متوازن' : 'سناریو تصادفی'} · عرض صفحه ${FA(r.vw)} · صفحه‌های دیده‌شده: ${(r.reached || []).join('، ')}</p>
+    ${qa.length ? `<div class="kpis">${qa.map(([t, a, ok]) => `<div class="kpi"><i>${t}</i><b class="${ok ? 'ok' : 'bad'}" style="font-size:18px">${esc(ANS[a] || a)}</b></div>`).join('')}<div class="kpi"><i>اطمینان / سختی</i><b style="font-size:18px">${FA(r.answers.q4)} / ${FA(r.answers.q5)}</b></div></div>
+    ${r.answers.q6 ? `<p style="margin-top:12px">«${esc(r.answers.q6)}»</p>` : ''}` : '<p class="mini">این نفر به سؤال‌ها نرسید.</p>'}
     <h3 style="margin-top:16px;font-size:15px">زمان روی هر صفحه</h3><p class="mini">${Object.entries(r.times || {}).map(([k, t]) => `${k}: ${FA((t / 1000).toFixed(1))}ث`).join(' · ')}</p>
     <h3 style="margin-top:12px;font-size:15px">ترتیب کلیک‌ها</h3><p class="mini">${(r.clicks || []).filter(c => c.a).map(c => `${c.s}→${esc(actName(c.a))}`).join(' · ') || '—'}</p>
     ${host ? '' : '<button class="abtn danger" id="del" style="margin-top:12px">حذف این جلسه</button> <span id="delm" class="status"></span>'}</div>`;

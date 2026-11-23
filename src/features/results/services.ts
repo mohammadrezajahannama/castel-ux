@@ -63,10 +63,33 @@ const isRun = (value: unknown): value is AccountLinkRun =>
 
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 
-export function toRow(run: AccountLinkRun, receivedAt: string, source: RunSource): RunRow {
+/** A run as v2 has it. v1 runs (7 questions; q2 asked what moved over) are read with q2 dropped and the rest renumbered. */
+export function normalizeRun(run: AccountLinkRun): AccountLinkRun {
+  if ((run.v ?? 1) >= 2 || !run.answers) return run;
+  const a = run.answers as unknown as Record<string, string | number>;
+  const s = (run.score ?? {}) as unknown as Record<string, boolean>;
+  const score = { q1: !!s.q1, q2: !!s.q3, q3: !!s.q4, comp: 0 };
+  score.comp = [score.q1, score.q2, score.q3].filter(Boolean).length;
+  return {
+    ...run,
+    v: 2,
+    answers: {
+      q1: String(a.q1),
+      q2: String(a.q3),
+      q3: String(a.q4),
+      q4: Number(a.q5),
+      q5: Number(a.q6),
+      q6: String(a.q7 ?? ""),
+    },
+    score,
+  };
+}
+
+export function toRow(raw: AccountLinkRun, receivedAt: string, source: RunSource): RunRow {
+  const run = normalizeRun(raw);
   const confirmed = run.outcome === "completed";
   const comprehension = run.score?.comp ?? null;
-  const confidence = run.answers?.q5 ?? null;
+  const confidence = run.answers?.q4 ?? null;
   const taskTime = sum(
     Object.entries(run.times ?? {})
       .filter(([screen]) => screen !== "end" && screen !== "questions")
@@ -83,12 +106,14 @@ export function toRow(run: AccountLinkRun, receivedAt: string, source: RunSource
     success: confirmed && run.choice === "tg",
     wrongSuccess: confirmed && run.choice === "bale",
     comprehension,
+    understood: comprehension !== null && comprehension >= 2,
+    misconception: run.answers?.q1 === "transfer_kept",
     confidence,
-    difficulty: run.answers?.q6 ?? null,
-    confidentWrong: confidence !== null && comprehension !== null && confidence >= 4 && comprehension <= 2,
+    difficulty: run.answers?.q5 ?? null,
+    confidentWrong: confidence !== null && comprehension !== null && confidence >= 4 && comprehension < 2,
     taskTime,
     friction: (run.backs ?? 0) + (run.restarts ?? 0) + (run.cancels ?? 0) + (run.disabledTaps ?? 0),
-    comment: run.answers?.q7 ?? "",
+    comment: run.answers?.q6 ?? "",
     run,
   };
 }
@@ -193,6 +218,8 @@ export function summarize(rows: RunRow[]) {
     wrongSuccess: pct(rows.filter((row) => row.wrongSuccess).length, rows.length),
     cancelled: pct(rows.filter((row) => row.outcome === "cancelled").length, rows.length),
     comprehension: mean(answered.map((row) => row.comprehension!)),
+    understood: pct(answered.filter((row) => row.understood).length, answered.length),
+    misconception: pct(answered.filter((row) => row.misconception).length, answered.length),
     confidentWrong: pct(answered.filter((row) => row.confidentWrong).length, answered.length),
     difficulty: mean(answered.map((row) => row.difficulty!).filter((v) => v !== null)),
     medianTime: (() => {
@@ -229,7 +256,8 @@ export function pageOf(
       runs: stats.runs,
       success: stats.success,
       wrongSuccess: stats.wrongSuccess,
-      comprehension: stats.comprehension,
+      understood: stats.understood,
+      misconception: stats.misconception,
       confidentWrong: stats.confidentWrong,
       medianTime: stats.medianTime,
     },
