@@ -214,8 +214,8 @@ const ic = (n, c = 'currentColor', w = 2) => `<svg viewBox="0 0 24 24" fill="non
 
 /* ---------- test data (simplified for people new to the game) ---------- */
 const ACC = {
-  tg:   {k:'tg',   name:'Taha',    plat:'تلگرام', icon:A.tg,   av:A.avTaha,   castle:12, power:'۲.۱M', troops:'۱۸K',  vip:3, coins:9100,  skins:4, builders:1, queues:1, age:'۸ ماه'},
-  bale: {k:'bale', name:'Bardia',  plat:'بله',    icon:A.bale, av:A.avBardia, castle:8,  power:'۹۸۰K', troops:'۶.۴K', vip:1, coins:10000, skins:2, builders:2, queues:2, age:'۱۲ ماه'}
+  tg:   {k:'tg',   name:'Taha',    plat:'تلگرام', icon:A.tg,   av:A.avTaha,   castle:12, power:'۲٫۱ میلیون', troops:'۱۸ هزار',  vip:3, coins:9100,  skins:4, builders:1, queues:1, age:'۸ ماه'},
+  bale: {k:'bale', name:'Bardia',  plat:'بله',    icon:A.bale, av:A.avBardia, castle:8,  power:'۹۸۰ هزار', troops:'۶٫۴ هزار', vip:1, coins:10000, skins:2, builders:2, queues:2, age:'۱۲ ماه'}
 };
 const other = k => k === 'tg' ? 'bale' : 'tg';
 const SC_NAME = {a:'A · مرحله‌به‌مرحله', b:'B · پیش‌نمایش نتیجه', c:'C · تأیید آگاهانه'};
@@ -230,57 +230,57 @@ const note = (kind, title, lines, icon) => {
 };
 const pl = a => `<span class="pill"><img src="${a.icon}" alt="">${a.plat}</span>`;
 const tag = (k, t) => `<span class="tag ${k}">${ic(k === 'keep' ? 'checkCircle' : k === 'rem' ? 'trash' : 'user', '#fff')}${t}</span>`;
-const identity = (a, extra = '', sub) => `<div class="row" style="gap:12px;align-items:flex-start"><img class="av" src="${a.av}" alt=""><div class="grow"><div class="nm">${a.name}</div><div class="cap">${sub || 'سطح ' + FA(a.castle) + ' · سرور ۴'}</div></div>${pl(a)}${extra}</div>`;
-const stepper = cur => `<div class="prog"><b>مرحلهٔ ${FA(cur)} از ۳</b><div class="step">${['بررسی حساب‌ها','انتخاب حساب اصلی','تأیید نهایی'].map((l, i) => `<div class="${i + 1 < cur ? 'done' : i + 1 === cur ? 'on' : ''}"><i></i><span>${l}</span></div>`).join('')}</div></div>`;
-const timer = cd => `<span class="timer">${ic('clock', '#fad08c')}<bdi dir="ltr" class="cd">${cd}</bdi> تا باطل شدن لینک</span>`;
+const identity = (a, extra = '', sub) => `<div class="row" style="gap:12px;align-items:flex-start"><img class="av" src="${a.av}" alt=""><div class="grow"><div class="nm">${a.name}</div><div class="cap">${sub || 'سطح قلعه ' + FA(a.castle) + ' · سرور ۴'}</div></div>${pl(a)}${extra}</div>`;
+const stepper = cur => `<div class="prog"><b>در تلگرام، مرحلهٔ ${FA(cur)} از ۳</b><div class="step">${['بررسی حساب‌ها','انتخاب حساب','تأیید نهایی'].map((l, i) => `<div class="${i + 1 < cur ? 'done' : i + 1 === cur ? 'on' : ''}"><i></i><span>${l}</span></div>`).join('')}</div></div>`;
+const timer = cd => `<span class="timer">${ic('clock', '#fad08c')}زمان باقی‌ماندهٔ لینک · <bdi dir="ltr" class="cd">${cd}</bdi></span>`;
 const linkBox = () => `<div class="link">${ic('link', '#aeaeae')}<code>castel.link/c/8KX2-91QA</code><button class="cp" data-act="copy" aria-label="کپی">${ic('copy', '#fad08c')}</button></div>`;
 const frame = (o) => `<div class="scr ${o.sm ? 'sm' : ''}" data-screen="${o.id}">${header()}${o.title ? `<div class="pt">${o.title}</div>` : ''}<div class="bd ${o.gap || ''}">${o.body}</div>${o.foot ? `<div class="ft">${o.foot}</div>` : ''}${o.over || ''}</div>`;
 
 /* ---------- screens; ctx = {sc, sel, checks, cd} ---------- */
 function s1Body() {
   const a = ACC.bale;
-  return `<div class="card">${'<div class="row">' + tag('gold', 'حسابی که الان در آن هستید') + '</div>'}${identity(a)}</div>
-  <div class="col"><p class="h">اتصال حساب در ۴ مرحله</p><p class="p">با اتصال، یک حساب بازی را هم در بله و هم در تلگرام باز می‌کنید. اگر در تلگرام هم حساب دارید، فقط یکی از دو حساب می‌ماند و دیگری حذف می‌شود.</p>
-  ${['ساخت لینک (همین‌جا در بله)','باز کردن لینک (در تلگرام)','انتخاب حساب (در تلگرام)','تأیید نهایی (در تلگرام)'].map((t, i) => `<div class="row" style="gap:12px"><span class="num">${FA(i + 1)}</span><span class="p">${t}</span></div>`).join('')}</div>
+  return `<div class="card">${'<div class="row">' + tag('gold', 'حساب فعلی شما') + '</div>'}${identity(a)}</div>
+  <div class="col"><p class="h">اتصال حساب در ۴ مرحله</p><p class="p">بعد از اتصال می‌توانید با یک حساب Castel در بله و تلگرام بازی کنید. اگر در هر دو پیام‌رسان حساب دارید، انتخاب می‌کنید کدام حساب بماند. حساب دیگر پس از تأیید نهایی حذف می‌شود.</p>
+  ${['ساخت لینک در بله','باز کردن لینک و بررسی حساب‌ها در تلگرام','انتخاب حساب در تلگرام','تأیید نهایی در تلگرام'].map((t, i) => `<div class="row" style="gap:12px"><span class="num">${FA(i + 1)}</span><span class="p">${t}</span></div>`).join('')}</div>
   <div class="col"><p class="lbl">پیام‌رسان‌ها</p>
-  <div class="plat"><img src="${A.bale}" alt=""><span class="grow">بله</span><span class="pill" style="background:none;color:#3aa750">${ic('checkCircle', '#3aa750')}همین حساب</span></div>
+  <div class="plat"><img src="${A.bale}" alt=""><span class="grow">بله</span><span class="pill" style="background:none;color:#3aa750">${ic('checkCircle', '#3aa750')}حساب فعلی</span></div>
   <div class="plat"><img src="${A.tg}" alt=""><span class="grow">تلگرام</span><button class="sbtn" data-act="connect-tg">اتصال</button></div>
   <div class="plat"><img src="${A.eitaa}" alt="" style="border-radius:6px"><span class="grow">ایتا</span><button class="sbtn" data-act="connect-eitaa">اتصال</button></div></div>`;
 }
-const s1 = c => frame({id:'s1', title:'حساب‌ها', body:s1Body(), sm:c.sc !== 'a', foot:`<div class="row cap">${ic('lock', '#aeaeae')}<span>اتصال حساب برگشت ندارد. بعد از اتصال نمی‌توانید حساب‌ها را از هم جدا کنید.</span></div>`});
+const s1 = c => frame({id:'s1', title:'حساب‌ها', body:s1Body(), sm:c.sc !== 'a', foot:`<div class="row cap">${ic('lock', '#aeaeae')}<span>پس از تأیید، نمی‌توانید حساب‌ها را از هم جدا کنید یا حساب حذف‌شده را برگردانید.</span></div>`});
 
 function s2(c) {
   if (c.sc === 'b') {
     return frame({id:'s2', title:'حساب‌ها', body:s1Body(), sm:true, over:`<div class="dim"></div><div class="sheet sm"><div class="handle"></div><p class="h">لینک اتصال به تلگرام</p>
-    <p class="p">این لینک را در تلگرام، در «پیام‌های ذخیره‌شده» خودتان باز کنید. همان‌جا قبل از هر تغییری، نتیجهٔ اتصال را می‌بینید.</p>
-    <div><div class="big"><bdi dir="ltr" class="cd">${c.cd}</bdi></div><div class="cap" style="text-align:center">تا باطل شدن لینک</div></div>${linkBox()}
-    ${note('danger', 'این لینک مثل رمز حساب شماست', ['هر کس آن را باز کند می‌تواند حساب Bardia را به تلگرام خودش وصل کند. برای کسی نفرستید.'])}
+    <p class="p">لینک را کپی کنید و در «پیام‌های ذخیره‌شده» تلگرام برای خودتان بفرستید. آن را همان‌جا باز کنید تا پیش از تأیید، نتیجهٔ اتصال را ببینید.</p>
+    <div><div class="cap" style="text-align:center">زمان باقی‌ماندهٔ لینک</div><div class="big"><bdi dir="ltr" class="cd">${c.cd}</bdi></div></div>${linkBox()}
+    ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
     ${btn('کپی لینک', 'gold', 'copy', {icon:'copy'})}${btn('بستن', 'ghost', 'back-s1')}</div>`});
   }
-  return frame({id:'s2', title:'اتصال به تلگرام', sm:c.sc === 'c', body:`<div class="col"><p class="h">این لینک را در تلگرام باز کنید</p><p class="p">لینک را کپی کنید و در تلگرام، در «پیام‌های ذخیره‌شده» خودتان بازش کنید. دو تأیید بعدی همان‌جا انجام می‌شود.</p></div>
+  return frame({id:'s2', title:'اتصال به تلگرام', sm:c.sc === 'c', body:`<div class="col"><p class="h">لینک را در تلگرام باز کنید</p><p class="p">لینک را کپی کنید و در «پیام‌های ذخیره‌شده» تلگرام برای خودتان بفرستید. آن را همان‌جا باز کنید تا حساب‌ها را ببینید و اتصال را ادامه دهید.</p></div>
   <div class="col">${linkBox()}<div class="row">${timer(c.cd)}</div></div>
-  ${note('danger', 'این لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. در بله دیگر از شما تأییدی گرفته نمی‌شود.'])}
-  ${note('info', 'لینک فقط ۱۰ دقیقه کار می‌کند', ['اگر وقتش تمام شد، از همین صفحه یک لینک تازه بسازید.'])}`,
+  ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
+  ${note('info', 'اگر مهلت ۱۰ دقیقه‌ای لینک تمام شد', ['از همین صفحه می‌توانید لینک تازه‌ای بسازید.'])}`,
   foot:btn('کپی لینک', 'gold', 'copy', {icon:'copy'}) + btn('انصراف', 'ghost', 'back-s1')});
 }
 const bridge = c => frame({id:'bridge', title:'', body:`<div class="guide"><span class="gtag">راهنمای تست</span>
-  <p class="h">لینک کپی شد ✓</p><p class="p" style="font-size:14px;line-height:24px">در بازی واقعی، حالا تلگرام را باز می‌کنی و لینک را در «پیام‌های ذخیره‌شده» خودت می‌زنی.<br>برای ادامهٔ تست، روی لینک زیر بزن.</p>
+  <p class="h">ادامه در تلگرام</p><p class="p" style="font-size:14px;line-height:24px">در بازی، لینک را در «پیام‌های ذخیره‌شده» تلگرام برای خودت می‌فرستی و از همان‌جا بازش می‌کنی.<br>برای رفتن به تلگرامِ آزمایشی، روی لینک پایین بزن.</p>
   <button class="link" data-act="open-link" style="width:100%;border:1px solid #927f61;cursor:pointer"><img src="${A.tg}" alt="" style="width:24px;height:24px;border-radius:50%"><code>castel.link/c/8KX2-91QA</code>${ic('arrowLeft', '#fad08c')}</button></div>`});
 
 function s3(c) {
   const t = ACC.tg, m = ACC.bale;
   if (c.sc === 'b') {
-    const tile = (a, lb, gold) => `<div class="tile"><span class="cap" style="font-weight:700;color:${gold ? '#fad08c' : '#aeaeae'}">${lb}</span><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}</div>`;
-    return frame({id:'s3', title:'اتصال حساب', sm:true, gap:'g12', body:`<p class="h">این لینک دو حساب را به هم وصل می‌کند</p>
-    <div class="row" style="align-items:stretch">${tile(t, 'حسابی که الان در آن هستید', 1)}${tile(m, 'حسابی که لینک را ساخته')}</div>
+    const tile = (a, lb, gold) => `<div class="tile"><span class="cap" style="font-weight:700;color:${gold ? '#fad08c' : '#aeaeae'}">${lb}</span><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح قلعه ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}</div>`;
+    return frame({id:'s3', title:'اتصال حساب', sm:true, gap:'g12', body:`<p class="h">دو حساب بازی پیدا شد</p>
+    <div class="row" style="align-items:stretch">${tile(t, 'حساب فعلی شما در تلگرام', 1)}${tile(m, 'حساب شما در بله')}</div>
     <div class="arrow">${ic('arrowDown', '#ff9533')}</div>
-    <div class="note orange"><div class="tt">${ic('trash', '#ff9533')}<span>فقط یکی از این دو حساب می‌ماند</span></div><p class="p">حساب دیگر با قلعه، نیروها و منابعش حذف می‌شود. در مرحلهٔ بعد انتخاب می‌کنید.</p></div>`,
-    foot:btn('انتخاب حسابی که می‌ماند', 'gold', 'to-s4', {icon:'arrowLeft'}) + btn('انصراف', 'ghost', 'cancel')});
+    <div class="note orange"><div class="tt">${ic('trash', '#ff9533')}<span>فقط یکی از دو حساب می‌ماند</span></div><p class="p">در مرحلهٔ بعد انتخاب می‌کنید کدام حساب بماند. پس از تأیید نهایی، حساب دیگر و قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شوند.</p></div>`,
+    foot:btn('رفتن به انتخاب حساب', 'gold', 'to-s4', {icon:'arrowLeft'}) + btn('انصراف', 'ghost', 'cancel')});
   }
-  return frame({id:'s3', title:'اتصال حساب', sm:c.sc === 'c', body:`${stepper(1)}<div class="col"><p class="h">دو حساب پیدا شد</p><p class="p">لینکی که باز کردید مال یک حساب در بله است. شما الان در تلگرام هستید و این‌جا هم حساب دارید.</p></div>
-  <div class="col"><p class="lbl">حسابی که الان در آن هستید</p><div class="card">${identity(t)}</div></div>
-  <div class="col"><p class="lbl">حسابی که لینک را ساخته</p><div class="card">${identity(m)}</div></div>`,
-  foot:btn('ادامه', 'gold', 'to-s4', {icon:'arrowLeft'}) + btn('انصراف', 'ghost', 'cancel')});
+  return frame({id:'s3', title:'اتصال حساب', sm:c.sc === 'c', body:`${stepper(1)}<div class="col"><p class="h">دو حساب بازی پیدا شد</p><p class="p">یکی حساب فعلی شما در تلگرام است و دیگری حساب بله‌ای است که لینک از آن ساخته شده.</p></div>
+  <div class="col"><p class="lbl">حساب فعلی شما در تلگرام</p><div class="card">${identity(t)}</div></div>
+  <div class="col"><p class="lbl">حساب شما در بله</p><div class="card">${identity(m)}</div></div>`,
+  foot:btn('رفتن به انتخاب حساب', 'gold', 'to-s4', {icon:'arrowLeft'}) + btn('انصراف', 'ghost', 'cancel')});
 }
 
 function s4(c) {
@@ -289,19 +289,20 @@ function s4(c) {
     const tile = a => {
       const st = !sel ? '' : sel === a.k ? 'sel' : '';
       const tg = !sel ? '' : sel === a.k ? tag('keep', 'می‌ماند') : tag('rem', 'حذف می‌شود');
-      return `<div class="tile ${st}" data-act="pick-${a.k}" role="button" style="cursor:pointer"><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}${tg}</div>`;
+      return `<div class="tile ${st}" data-act="pick-${a.k}" role="button" style="cursor:pointer"><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح قلعه ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}${tg}</div>`;
     };
     let res;
     if (sel) {
       const K = ACC[sel], R = ACC[other(sel)];
-      const d = (v, delta) => `<b>${v}</b>${delta ? `<span class="delta">${ic('up', '#3aa750', 2.5)}${delta}</span>` : '<span class="same">بدون تغییر</span>'}`;
+      // A value and how it changes: "۱۰٬۰۰۰ بیشتر", "۲ سطح بالاتر" or "بدون تغییر".
+      const d = (v, delta, unit = 'بیشتر') => `<b>${v}</b>${delta ? `<span class="delta">${ic('up', '#3aa750', 2.5)}${delta} ${unit}</span>` : '<span class="same">بدون تغییر</span>'}`;
       const vipDelta = Math.max(K.vip, R.vip) - K.vip;
       res = `<div class="card" style="border:2px solid #fad08c;padding:11px;gap:8px"><div class="row">${tag('gold', 'حساب شما بعد از اتصال')}</div>
-      <div class="row" style="gap:12px"><img class="av" src="${K.av}" alt=""><div class="grow"><div class="nm">${K.name}</div><div class="cap">سطح ${FA(K.castle)} · سرور ۴</div></div><span class="pill"><img src="${A.tg}" alt="">تلگرام</span><span class="pill"><img src="${A.bale}" alt="">بله</span></div>
-      <div class="stats"><div class="stat"><i>VIP</i>${d(FA(Math.max(K.vip, R.vip)), vipDelta ? FA(vipDelta) : 0)}</div><div class="stat"><i>سکه</i>${d(nf(K.coins + R.coins), nf(R.coins))}</div><div class="stat"><i>اسکین</i>${d(FA(K.skins + R.skins), FA(R.skins))}</div>
+      <div class="row" style="gap:12px"><img class="av" src="${K.av}" alt=""><div class="grow"><div class="nm">${K.name}</div><div class="cap">سطح قلعه ${FA(K.castle)} · سرور ۴</div></div><span class="pill"><img src="${A.tg}" alt="">تلگرام</span><span class="pill"><img src="${A.bale}" alt="">بله</span></div>
+      <div class="stats"><div class="stat"><i>سطح VIP</i>${d(FA(Math.max(K.vip, R.vip)), vipDelta ? FA(vipDelta) : 0, 'سطح بالاتر')}</div><div class="stat"><i>سکه</i>${d(nf(K.coins + R.coins), nf(R.coins))}</div><div class="stat"><i>اسکین بازشده</i>${d(FA(K.skins + R.skins), FA(R.skins))}</div>
       <div class="stat"><i>صف لشکرکشی</i>${d(FA(Math.max(K.queues, R.queues)), Math.max(K.queues, R.queues) - K.queues ? FA(Math.max(K.queues, R.queues) - K.queues) : 0)}</div><div class="stat"><i>سازنده</i>${d(FA(Math.max(K.builders, R.builders)), Math.max(K.builders, R.builders) - K.builders ? FA(Math.max(K.builders, R.builders) - K.builders) : 0)}</div><div class="stat"><i>قدرت</i>${d(K.power, 0)}</div></div></div>`;
     } else {
-      res = `<div class="card" style="border-style:dashed;align-items:center;text-align:center;padding:24px 12px"><span class="p">یک حساب را انتخاب کنید تا ببینید بعد از اتصال چه چیزی می‌ماند.</span></div>`;
+      res = `<div class="card" style="border-style:dashed;align-items:center;text-align:center;padding:24px 12px"><span class="p">یک حساب را انتخاب کنید تا نتیجهٔ اتصال را ببینید.</span></div>`;
     }
     return frame({id:'s4', title:'انتخاب حساب', sm:true, gap:'g8', body:`<p class="h">کدام حساب بماند؟</p><div class="row" style="align-items:stretch">${tile(ACC.tg)}${tile(ACC.bale)}</div><div class="arrow">${ic('arrowDown', '#fad08c')}</div>${res}`,
       foot:btn(sel ? 'ادامه با حساب ' + ACC[sel].name : 'یک حساب را انتخاب کنید', 'gold', 'to-s5', {icon:sel ? 'arrowLeft' : null, dis:!sel}) + btn('انصراف', 'ghost', 'cancel')});
@@ -311,57 +312,50 @@ function s4(c) {
     return `<div class="card ${on ? 'sel' : ''}" data-act="pick-${a.k}" role="button" style="cursor:pointer">${identity(a, `<span class="radio ${on ? 'on' : ''}">${on ? ic('check', '#000', 2.5) : ''}</span>`, 'سرور ۴ · عمر حساب ' + a.age)}
     <div class="stats"><div class="stat"><i>سطح قلعه</i><b>${FA(a.castle)}</b></div><div class="stat"><i>قدرت</i><b>${a.power}</b></div><div class="stat"><i>نیروها</i><b>${a.troops}</b></div></div></div>`;
   };
-  return frame({id:'s4', title:'انتخاب حساب', sm:c.sc === 'c', gap:'g12', body:`${stepper(2)}<div class="col4"><p class="h">پیشرفت کدام حساب بماند؟</p><p class="p">قلعه، نیروها و منابع حساب دیگر حذف می‌شود.</p></div>
+  return frame({id:'s4', title:'انتخاب حساب', sm:c.sc === 'c', gap:'g12', body:`${stepper(2)}<div class="col4"><p class="h">کدام حساب بماند؟</p><p class="p">بعد از تأیید نهایی، حساب دیگر و قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شوند.</p></div>
   ${card(ACC.tg)}${card(ACC.bale)}
-  <div class="note" style="border-color:#927f61"><div class="tt" style="color:#fad08c">${ic('merge', '#fad08c')}<span>این موارد در هر حالت در حسابی که انتخاب می‌کنید جمع می‌شوند</span></div>
-  <div class="row" style="flex-wrap:wrap;gap:4px">${['سطح VIP بالاتر: ۳', '۱۹٬۱۰۰ سکه (جمع هر دو)', 'همهٔ اسکین‌ها (۶)', 'صف لشکرکشی اضافه', 'سازندهٔ دوم'].map(t => `<span class="chip">${ic('check', '#3aa750')}${t}</span>`).join('')}</div></div>`,
-  foot:btn(sel ? 'ادامه' : 'یک حساب را انتخاب کنید', 'gold', 'to-s5', {icon:sel ? 'arrowLeft' : null, dis:!sel}) + btn('انصراف', 'ghost', 'cancel')});
+  <div class="note" style="border-color:#927f61"><div class="tt" style="color:#fad08c">${ic('merge', '#fad08c')}<span>این موارد در هر صورت در حساب انتخابی می‌مانند</span></div>
+  <div class="row" style="flex-wrap:wrap;gap:4px">${['سطح VIP بالاتر (۳)', 'مجموع سکه‌ها (۱۹٬۱۰۰)', 'اسکین‌های بازشده (۶)', 'صف لشکرکشی اضافه', 'سازندهٔ دوم'].map(t => `<span class="chip">${ic('check', '#3aa750')}${t}</span>`).join('')}</div></div>`,
+  foot:btn(sel ? 'رفتن به تأیید نهایی' : 'یک حساب را انتخاب کنید', 'gold', 'to-s5', {icon:sel ? 'arrowLeft' : null, dis:!sel}) + btn('انصراف', 'ghost', 'cancel')});
 }
 
-// What the kept account K gets from R, e.g. "۱۰٬۰۰۰ سکه، ۲ اسکین، صف لشکرکشی اضافه و سازندهٔ دوم".
-function gains(K, R) {
-  const g = [nf(R.coins) + ' سکه', FA(R.skins) + ' اسکین'];
-  if (R.vip > K.vip) g.push('سطح VIP بالاتر');
-  if (R.queues > K.queues) g.push('صف لشکرکشی اضافه');
-  if (R.builders > K.builders) g.push('سازندهٔ دوم');
-  return g.slice(0, -1).join('، ') + ' و ' + g[g.length - 1];
-}
 function s5(c) {
   const K = ACC[c.sel || 'tg'], R = ACC[other(c.sel || 'tg')];
   if (c.sc === 'b') {
     const item = (bg, icn, col, t, sub, tc, extra) => `<div class="row" style="gap:12px;align-items:flex-start;${extra || ''}"><span class="badge" style="background:${bg}">${ic(icn, col)}</span><div class="grow"><div class="lbl" style="color:${tc || '#fff'}">${t}</div><p class="p">${sub}</p></div></div>`;
-    return frame({id:'s5', title:'تأیید نهایی', sm:true, body:`<div class="col4"><p class="h">قبل از اتصال، یک بار دیگر بخوانید</p><p class="p">با تایید اتصال، این اتفاق‌ها می‌افتد:</p></div>
-    <div class="card" style="padding:16px;gap:16px">${item('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند`, 'از این به بعد در تلگرام و بله باز می‌شود.')}<div class="div"></div>
-    ${item('#4f422d', 'merge', '#fad08c', `این‌ها از ${R.name} به ${K.name} اضافه می‌شود`, gains(K, R))}<div class="div"></div>
-    ${item('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} حذف می‌شود`, 'قلعه، ساختمان‌ها، نیروها و منابعش پاک می‌شود.', '#ff9533')}
-    ${item('#8d1f1f', 'noUndo', '#fff', 'این کار برگشت ندارد', 'بعد از اتصال نمی‌توانید حساب‌ها را از هم جدا کنید.', '#e8313f', 'border:1px solid #df403d;border-radius:8px;padding:12px')}</div>`,
-    foot:`<div class="hold" id="hold" role="button" tabindex="0"><div class="fill"></div>${ic('touch', '#fff')}<span>برای اتصال، دکمه را ۲ ثانیه نگه دارید</span></div>` + btn('انصراف', 'ghost', 'cancel')});
+    return frame({id:'s5', title:'تأیید نهایی', sm:true, body:`<div class="col4"><p class="h">قبل از اتصال، نتیجه را بررسی کنید</p><p class="p">بعد از تأیید اتصال، این تغییرها انجام می‌شوند.</p></div>
+    <div class="card" style="padding:16px;gap:16px">${item('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند.`, 'می‌توانید با آن در بله و تلگرام بازی کنید.')}<div class="div"></div>
+    ${K.k === 'tg' ? item('#4f422d', 'merge', '#fad08c', `حساب ${K.name} این موارد را از ${R.name} می‌گیرد.`, `${nf(R.coins)} سکه، ${FA(R.skins)} اسکین بازشده، یک صف لشکرکشی اضافه و سازندهٔ دوم.`)
+      : item('#4f422d', 'merge', '#fad08c', `${nf(R.coins)} سکه و ${FA(R.skins)} اسکین بازشده از ${R.name} به ${K.name} اضافه می‌شود.`, `سطح VIP هم به ${FA(Math.max(K.vip, R.vip))} می‌رسد.`)}<div class="div"></div>
+    ${item('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} حذف می‌شود.`, 'قلعه، ساختمان‌ها، نیروها و منابعش را هم از دست می‌دهید.', '#ff9533')}
+    ${item('#8d1f1f', 'noUndo', '#fff', 'این اتصال برگشت ندارد.', `بعد از اتصال، نمی‌توانید حساب‌ها را از هم جدا کنید یا حساب ${R.name} را برگردانید.`, '#e8313f', 'border:1px solid #df403d;border-radius:8px;padding:12px')}</div>`,
+    foot:`<div class="hold" id="hold" role="button" tabindex="0"><div class="fill"></div>${ic('touch', '#fff')}<span>برای اتصال و حذف ${R.name}، ۲ ثانیه نگه دارید</span></div>` + btn('انصراف', 'ghost', 'cancel')});
   }
   if (c.sc === 'c') {
     const all = c.checks.every(Boolean);
     const line = (bg, icn, col, t, tc) => `<div class="row" style="gap:12px"><span class="ibox" style="background:${bg}">${ic(icn, col)}</span><span class="p grow" style="color:${tc || '#fff'}">${t}</span></div>`;
     const chk = (i, t) => `<button class="chk ${c.checks[i] ? 'on' : ''}" data-act="chk-${i}"><span class="box">${c.checks[i] ? ic('check', '#000', 2.5) : ''}</span><span>${t}</span></button>`;
-    return frame({id:'s5', title:'تأیید نهایی', sm:true, gap:'g12', body:`${stepper(3)}<p class="h">آخرین بررسی</p>
-    <div class="card">${line('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند و در تلگرام و بله باز می‌شود.`)}<div class="div"></div>
-    ${line('#4f422d', 'merge', '#fad08c', `سطح VIP بالاتر، سکه‌ها، اسکین‌ها، صف لشکرکشی اضافه و سازندهٔ دوم از ${R.name} به ${K.name} منتقل می‌شود.`)}<div class="div"></div>
-    ${line('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} با قلعه، نیروها و منابعش حذف می‌شود.`, '#ff9533')}</div>
-    <p class="p">برای فعال شدن دکمه، هر سه مورد را تیک بزنید.</p>
-    ${chk(0, 'می‌دانم این کار برگشت ندارد.')}${chk(1, 'می‌دانم بعد از اتصال نمی‌توانم حساب‌ها را از هم جدا کنم.')}${chk(2, `می‌دانم حساب ${R.name} دیگر برنمی‌گردد.`)}`,
+    return frame({id:'s5', title:'تأیید نهایی', sm:true, gap:'g12', body:`${stepper(3)}<p class="h">قبل از اتصال، انتخابتان را بررسی کنید</p>
+    <div class="card">${line('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند و می‌توانید با آن در بله و تلگرام بازی کنید.`)}<div class="div"></div>
+    ${line('#4f422d', 'merge', '#fad08c', `سطح VIP بالاتر، مجموع سکه‌ها، اسکین‌های بازشدهٔ هر دو حساب، صف لشکرکشی اضافه و سازندهٔ دوم در حساب ${K.name} می‌مانند.`)}<div class="div"></div>
+    ${line('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} و قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شوند.`, '#ff9533')}</div>
+    <p class="p">برای فعال شدن دکمهٔ اتصال، هر سه گزینه را تیک بزنید.</p>
+    ${chk(0, `می‌دانم با حساب ${K.name} در هر دو پیام‌رسان بازی می‌کنم.`)}${chk(1, 'می‌دانم بعد از اتصال نمی‌توانم حساب‌ها را از هم جدا کنم.')}${chk(2, `می‌دانم حساب ${R.name} حذف می‌شود و نمی‌توانم آن را برگردانم.`)}`,
     foot:btn('اتصال و حذف ' + R.name, 'red', 'confirm', {dis:!all}) + btn('انصراف', 'ghost', 'cancel')});
   }
-  return frame({id:'s5', title:'تأیید نهایی', gap:'g12', body:`${stepper(3)}<p class="h">از انتخاب خود اطمینان دارید؟</p>
-  <div class="card"><div class="row"><span class="p grow" style="color:#fff">حساب ${K.name} در تلگرام و بله باز می‌شود.</span>${tag('keep', 'می‌ماند')}</div><div class="div"></div>
-  <div class="row"><span class="p grow" style="color:#fff">حساب ${R.name} با قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شود.</span>${tag('rem', 'حذف می‌شود')}</div></div>
-  <div class="col"><p class="lbl">موارد زیر از ${R.name} به ${K.name} منتقل می‌شوند</p>${['سطح VIP بالاتر', 'سکه‌ها', 'اسکین‌های آزادشده', 'صف لشکرکشی اضافه و سازندهٔ دوم'].map(t => `<div class="row">${ic('check', '#3aa750')}<span class="p">${t}</span></div>`).join('').replace(/<svg /g, '<svg style="width:16px;height:16px" ')}</div>
-  ${note('danger', 'این کار برگشت ندارد', [`بعد از اتصال نمی‌توانید حساب‌ها را از هم جدا کنید یا ${R.name} را برگردانید.`])}`,
+  return frame({id:'s5', title:'تأیید نهایی', gap:'g12', body:`${stepper(3)}<p class="h">کدام حساب می‌ماند و کدام حذف می‌شود؟</p>
+  <div class="card"><div class="row"><span class="p grow" style="color:#fff">بعد از اتصال می‌توانید با حساب ${K.name} در بله و تلگرام بازی کنید.</span>${tag('keep', 'می‌ماند')}</div><div class="div"></div>
+  <div class="row"><span class="p grow" style="color:#fff">حساب ${R.name} و قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شوند.</span>${tag('rem', 'حذف می‌شود')}</div></div>
+  <div class="col"><p class="lbl">مواردی که در حساب ${K.name} می‌مانند</p>${['سطح VIP بالاتر', 'مجموع سکه‌ها', 'اسکین‌های بازشدهٔ هر دو حساب', 'صف لشکرکشی اضافه و سازندهٔ دوم'].map(t => `<div class="row">${ic('check', '#3aa750')}<span class="p">${t}</span></div>`).join('').replace(/<svg /g, '<svg style="width:16px;height:16px" ')}</div>
+  ${note('danger', 'این اتصال برگشت ندارد', [`بعد از اتصال، نمی‌توانید حساب‌ها را از هم جدا کنید یا حساب ${R.name} را برگردانید.`])}`,
   foot:btn('اتصال و حذف ' + R.name, 'red', 'confirm') + btn('انصراف', 'ghost', 'cancel')});
 }
 const endScr = c => frame({id:'end', title:'', body:`<div class="guide" style="text-align:center;align-items:center"><span class="gtag" style="align-self:center">راهنمای تست</span>
-  <p class="h">${c.outcome === 'cancelled' ? 'اتصال را لغو کردی' : 'تسک تمام شد'}</p><p class="p" style="font-size:14px;line-height:24px">ممنون! حالا چند سؤال کوتاه دربارهٔ چیزی که دیدی می‌پرسیم.</p>
+  <p class="h">${c.outcome === 'cancelled' ? 'اتصال را لغو کردی' : 'این بخش تمام شد'}</p><p class="p" style="font-size:14px;line-height:24px">ممنون که امتحانش کردی. حالا چند سؤال کوتاه دربارهٔ صفحه‌هایی که دیدی داریم.</p>
   <button class="btn gold" data-act="to-questions" style="margin-top:8px">رفتن به سؤال‌ها</button></div>`});
 const cancelScr = c => frame({id:'cancelled', title:'اتصال حساب', body:`<div class="guide" style="text-align:center;align-items:center"><span style="width:56px;height:56px;border-radius:28px;background:#343434;display:grid;place-items:center">${ic('x', '#d4d3d6')}</span>
-  <p class="h">اتصال لغو شد</p><p class="p">هیچ تغییری در حساب‌ها انجام نشد.</p></div>`,
-  foot:btn('دوباره امتحان می‌کنم', 'gold', 'restart') + btn('پایان تسک', 'ghost', 'end-cancel')});
+  <p class="h">اتصال لغو شد</p><p class="p">حساب‌هایت همان‌طور که بودند باقی ماندند.</p></div>`,
+  foot:btn('دوباره امتحان می‌کنم', 'gold', 'restart') + btn('پایان این بخش', 'ghost', 'end-cancel')});
 const RENDER = {s1, s2, bridge, s3, s4, s5, end:endScr, cancelled:cancelScr};
 
 /* ---------- encoding of result codes ---------- */
@@ -429,12 +423,12 @@ const Test = (() => {
   function intro() {
     app.innerHTML = `<div class="wrap"><div class="panel lead" style="max-width:720px;margin:0 auto">
     <h1>یک تست کوتاه برای بازی Castel</h1>
-    <p>حدود ۵ دقیقه طول می‌کشد. ما طراحی را می‌سنجیم، نه تو را. اگر جایی گیج شدی، یعنی طراحی ایراد دارد.</p>
-    <p>این یک نمونهٔ آزمایشی است و هیچ حسابی واقعاً تغییر نمی‌کند.</p>
-    <div class="goal"><p style="margin:0 0 8px">Castel یک بازی استراتژی است که داخل بله و تلگرام بازی می‌شود.</p>
-    <p style="margin:0 0 8px">تو دو حساب داری: یکی در <b>بله</b> به اسم <b>Bardia</b> و یکی در <b>تلگرام</b> به اسم <b>Taha</b>.</p>
-    <p style="margin:0">می‌خواهی از این به بعد فقط با یک حساب، هم در بله و هم در تلگرام بازی کنی. برایت مهم است <b>قلعهٔ قوی‌ترت را از دست ندهی.</b></p></div>
-    <p>از صفحهٔ حساب‌ها در بله شروع کن. هر وقت فکر کردی کار تمام شده یا نمی‌خواهی ادامه بدهی، همان‌جا متوقف شو.</p>
+    <p>این تست حدود ۵ دقیقه طول می‌کشد. می‌خواهیم ببینیم کار با صفحه‌ها چطور پیش می‌رود. اگر جایی مکث کردی یا چیزی برایت روشن نبود، همین برایمان مهم است.</p>
+    <p>با یک نسخهٔ آزمایشی کار می‌کنی. حساب‌های واقعی تغییری نمی‌کنند.</p>
+    <div class="goal"><p style="margin:0 0 8px">Castel یک بازی استراتژی است که می‌شود در بله و تلگرام بازی‌اش کرد.</p>
+    <p style="margin:0 0 8px">فرض کن دو حساب بازی داری. حساب <b>Bardia</b> در <b>بله</b> است و حساب <b>Taha</b> در <b>تلگرام</b>.</p>
+    <p style="margin:0">می‌خواهی در هر دو پیام‌رسان با یک حساب بازی کنی و <b>قلعهٔ قوی‌ترت را نگه داری.</b></p></div>
+    <p>از صفحهٔ «حساب‌ها» در بله شروع کن. هر وقت فکر کردی به هدفت رسیده‌ای یا خواستی تست را متوقف کنی، همان‌جا بایست.</p>
     <button class="cta" id="go">شروع تست</button></div></div>`;
     document.getElementById('go').onclick = async e => {
       e.target.disabled = true;
@@ -451,8 +445,8 @@ const Test = (() => {
   }
   function stage() {
     app.innerHTML = `<div class="wrap"><div class="stage"><aside class="side panel"><h2>هدف تو</h2>
-    <p style="color:#d4d3d6;margin:0 0 12px">دو حساب داری: <b>Bardia</b> در بله و <b>Taha</b> در تلگرام. می‌خواهی فقط با یک حساب در هر دو پیام‌رسان بازی کنی و <b style="color:#fad08c">قلعهٔ قوی‌ترت را از دست ندهی.</b></p>
-    <p class="small">با صفحه مثل یک گوشی واقعی کار کن. لازم نیست عجله کنی.</p></aside>
+    <p style="color:#d4d3d6;margin:0 0 12px"><b>Bardia</b> در بله است و <b>Taha</b> در تلگرام. می‌خواهی در هر دو پیام‌رسان با یک حساب بازی کنی و <b style="color:#fad08c">قلعهٔ قوی‌ترت را نگه داری.</b></p>
+    <p class="small">با صفحه همان‌طور کار کن که با گوشی‌ات کار می‌کنی. لازم نیست عجله کنی.</p></aside>
     <div class="phonebox" id="pbox"><div class="phone" id="phone"></div></div></div></div>`;
     phoneEl = document.getElementById('phone');
     fit(); addEventListener('resize', fit);
@@ -507,7 +501,7 @@ const Test = (() => {
     const act = a.dataset.act;
     if (a.getAttribute('aria-disabled') === 'true') { S.disabledTaps++; return; }
     if (act === 'connect-tg') go('s2');
-    else if (act === 'connect-eitaa') toast('در این تست فقط اتصال به تلگرام فعال است.');
+    else if (act === 'connect-eitaa') toast('در این تست فقط می‌توانید به تلگرام وصل شوید.');
     else if (act === 'copy') go('bridge');
     else if (act === 'back-s1') { S.backs++; go('s1'); }
     else if (act === 'open-link') go('s3');
@@ -561,18 +555,21 @@ const Test = (() => {
     clearInterval(cdTimer);
     S.times[S.screen] = (S.times[S.screen] || 0) + (Date.now() - S.enterAt); S.screen = 'questions';
     const K = ACC[S.choice || 'tg'], R = ACC[other(S.choice || 'tg')];
+    const q1 = S.choice
+      ? [`۱. اگر اتصال را تأیید کنی، چه اتفاقی برای حساب ${R.name} می‌افتد؟`, `حساب ${R.name} برای همیشه حذف می‌شود`, `بعضی از دارایی‌های حساب ${R.name} به ${K.name} منتقل می‌شوند و حساب ${R.name} هم باقی می‌ماند`, `حساب ${R.name} بدون تغییر در ${R.plat} می‌ماند`]
+      : ['۱. اگر یکی از دو حساب را انتخاب کنی و اتصال را تأیید کنی، چه اتفاقی برای حساب دیگر می‌افتد؟', 'حساب دیگر برای همیشه حذف می‌شود', 'بعضی از دارایی‌های حساب دیگر منتقل می‌شوند و خود حساب هم باقی می‌ماند', 'حساب دیگر بدون تغییر در پیام‌رسان خودش می‌ماند'];
     const radio = (q, opts) => opts.map(([v, t]) => `<label class="opt"><input type="radio" name="${q}" value="${v}"><span>${t}</span></label>`).join('');
     const scale = (q, a, b) => `<div class="scale">${[1, 2, 3, 4, 5].map(n => `<label><input type="radio" name="${q}" value="${n}"><span>${FA(n)}</span></label>`).join('')}</div><div class="scale-ends"><span>۱ = ${a}</span><span>۵ = ${b}</span></div>`;
     app.innerHTML = `<div class="wrap"><form class="panel" id="qf" style="max-width:720px;margin:0 auto" novalidate>
-    <h1 style="font-size:26px;margin:0 0 4px">چند سؤال کوتاه</h1><p style="color:#aeaeae;margin:0 0 8px">جواب درست یا غلط دربارهٔ تو نیست؛ دربارهٔ طراحی است. اگر مطمئن نیستی، «نمی‌دانم» را بزن.</p>
-    ${S.outcome === 'cancelled' ? '<div class="goal" style="margin:8px 0">تو اتصال را لغو کردی. به سؤال‌ها طوری جواب بده که انگار اتصال را تأیید کرده بودی.</div>' : ''}
-    <div class="q"><h3>۱. بعد از اتصال، با حساب ${R.name} چه اتفاقی افتاد؟</h3>${radio('q1', [['deleted', `حساب ${R.name} برای همیشه حذف شد`], ['transfer_kept', `بعضی چیزهایش به ${K.name} منتقل شد و خود حساب ${R.name} هنوز وجود دارد`], ['unchanged', `بدون تغییر در ${R.plat} باقی ماند`], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۲. اگر پشیمان شوی، می‌توانی حساب‌ها را دوباره جدا کنی؟</h3>${radio('q2', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۳. اگر لینک اتصال را برای کس دیگری بفرستی، چه می‌شود؟</h3>${radio('q3', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط می‌تواند اطلاعات حسابم را ببیند'], ['connect', 'می‌تواند حساب من را به حساب خودش وصل کند'], ['dk', 'نمی‌دانم']])}</div>
-    <div class="q"><h3>۴. قبل از زدن دکمهٔ آخر، چقدر مطمئن بودی چه اتفاقی می‌افتد؟</h3>${scale('q4', 'اصلاً مطمئن نبودم', 'کاملاً مطمئن بودم')}</div>
-    <div class="q"><h3>۵. انجام این کار چقدر سخت یا آسان بود؟</h3>${scale('q5', 'خیلی آسان', 'خیلی سخت')}</div>
-    <div class="q"><h3>۶. کجا مکث کردی یا مطمئن نبودی چه کار کنی؟</h3><p class="hint">اختیاری</p><textarea name="q6" maxlength="1000"></textarea></div>
-    <div id="qerr" class="err hide">لطفاً به سؤال‌های ۱ تا ۵ جواب بده.</div>
+    <h1 style="font-size:26px;margin:0 0 4px">چند سؤال کوتاه</h1><p style="color:#aeaeae;margin:0 0 8px">جواب‌هایت کمک می‌کنند بفهمیم صفحه‌ها چقدر واضح بوده‌اند. اگر در سؤال‌های ۱ تا ۳ مطمئن نیستی، «نمی‌دانم» را انتخاب کن.</p>
+    ${S.outcome === 'cancelled' ? '<div class="goal" style="margin:8px 0">بر اساس صفحه‌هایی که تا اینجا دیدی جواب بده.</div>' : ''}
+    <div class="q"><h3>${q1[0]}</h3>${radio('q1', [['deleted', q1[1]], ['transfer_kept', q1[2]], ['unchanged', q1[3]], ['dk', 'نمی‌دانم']])}</div>
+    <div class="q"><h3>۲. بعد از تأیید اتصال، می‌توانی حساب‌ها را دوباره از هم جدا کنی؟</h3>${radio('q2', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با کمک پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']])}</div>
+    <div class="q"><h3>۳. اگر لینک اتصال را برای کسی بفرستی و او آن را باز کند، چه می‌شود؟</h3>${radio('q3', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط می‌تواند اطلاعات حسابم را ببیند'], ['connect', 'می‌تواند حسابم را به حساب تلگرام خودش وصل کند'], ['dk', 'نمی‌دانم']])}</div>
+    <div class="q"><h3>${(S.reached || []).includes('s5') ? '۴. در صفحهٔ تأیید نهایی چقدر مطمئن بودی که می‌دانی بعد از اتصال چه اتفاقی می‌افتد؟' : '۴. تا جایی که پیش رفتی، چقدر مطمئن بودی که می‌دانی بعد از اتصال چه اتفاقی می‌افتد؟'}</h3>${scale('q4', 'اصلاً مطمئن نبودم', 'کاملاً مطمئن بودم')}</div>
+    <div class="q"><h3>۵. انجام این کار برایت چقدر آسان یا سخت بود؟</h3>${scale('q5', 'خیلی آسان', 'خیلی سخت')}</div>
+    <div class="q"><h3>۶. اگر جایی مکث کردی یا نمی‌دانستی چطور ادامه بدهی، بگو کجا بود و چرا.</h3><p class="hint">اختیاری</p><textarea name="q6" maxlength="1000"></textarea></div>
+    <div id="qerr" class="err hide">برای ثبت جواب‌ها، سؤال‌های بی‌جوابِ ۱ تا ۵ را کامل کن.</div>
     <div style="margin-top:16px"><button class="cta" type="submit">ثبت جواب‌ها</button></div></form></div>`;
     scrollTo(0, 0);
     document.getElementById('qf').addEventListener('submit', async e => {
@@ -592,7 +589,7 @@ const Test = (() => {
       return;
     }
     const code = await encode(record());
-    app.innerHTML = '<div class="wrap"><div class="panel lead" id="uxd" style="max-width:720px;margin:0 auto;text-align:center"><h1>در حال ارسال جواب‌ها…</h1><p>چند ثانیه صبر کن و صفحه را نبند.</p></div></div>';
+    app.innerHTML = '<div class="wrap"><div class="panel lead" id="uxd" style="max-width:720px;margin:0 auto;text-align:center"><h1>در حال ارسال جواب‌ها…</h1><p>تا ارسال تمام شود، صفحه را باز نگه دار.</p></div></div>';
     const box = document.getElementById('uxd');
     const opts = {code, testId:'account-link', runId:S.id, variant:S.scenario};
     if (window.UXSubmit && await UXSubmit.submit(opts)) UXDeliver.thanks(box);
@@ -728,8 +725,8 @@ const Admin = (() => {
   function qTab(v) {
     if (!data().some(r => r.finished)) { v.innerHTML = `<div class="empty">هنوز کسی به سؤال‌ها جواب نداده.</div>`; return; }
     const texts = data().filter(r => r.finished && r.answers.q6);
-    v.innerHTML = barsFor('۱. بعد از اتصال، با حسابی که انتخاب نشد چه اتفاقی افتاد؟', [['deleted', 'برای همیشه حذف شد'], ['transfer_kept', 'بعضی چیزهایش منتقل شد و خود حساب هنوز هست'], ['unchanged', 'بدون تغییر باقی ماند'], ['dk', 'نمی‌دانم']], 'q1', 'deleted')
-      + barsFor('۲. می‌توانی حساب‌ها را دوباره جدا کنی؟', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']], 'q2', 'no')
+    v.innerHTML = barsFor('۱. اگر اتصال را تأیید کنی، چه اتفاقی برای حساب دیگر می‌افتد؟', [['deleted', 'برای همیشه حذف می‌شود'], ['transfer_kept', 'بعضی دارایی‌ها منتقل می‌شوند و حساب هم باقی می‌ماند'], ['unchanged', 'بدون تغییر می‌ماند'], ['dk', 'نمی‌دانم']], 'q1', 'deleted')
+      + barsFor('۲. بعد از تأیید، می‌توانی حساب‌ها را دوباره جدا کنی؟', [['settings', 'بله، از تنظیمات'], ['support', 'بله، با کمک پشتیبانی'], ['no', 'نه'], ['dk', 'نمی‌دانم']], 'q2', 'no')
       + barsFor('۳. اگر لینک را برای کس دیگری بفرستی؟', [['nothing', 'هیچ اتفاقی نمی‌افتد'], ['see', 'فقط اطلاعات را می‌بیند'], ['connect', 'حساب را به حساب خودش وصل می‌کند'], ['dk', 'نمی‌دانم']], 'q3', 'connect')
       + barsFor('۴. اطمینان قبل از دکمهٔ آخر (۱ اصلاً، ۵ کاملاً)', [1, 2, 3, 4, 5].map(n => [n, FA(n)]), 'q4')
       + barsFor('۵. سختی (۱ خیلی آسان، ۵ خیلی سخت)', [1, 2, 3, 4, 5].map(n => [n, FA(n)]), 'q5')

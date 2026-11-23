@@ -12,8 +12,8 @@
 (function () {
   "use strict";
 
-  // Who receives the results. Shown to the tester when set, e.g. "@castel_ux" in Bale.
-  var CONTACT = window.UX_CONTACT || "";
+  // Who the tester sends a result file to.
+  var TO = "کسی که لینک تست را برایت فرستاده";
 
   var CSS =
     ".uxd{max-width:720px;margin:0 auto}" +
@@ -63,26 +63,18 @@
     var canShareFile = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
 
     var box = el("div", { class: "uxd" });
-    box.appendChild(el("h1", null, "ممنون! یک قدم مانده"));
-    box.appendChild(
-      el(
-        "p",
-        null,
-        "جواب‌هایت خودکار ارسال نشدند (احتمالاً به خاطر اینترنت). فایل نتیجه را " +
-          (CONTACT ? "در بله برای " + CONTACT : "برای کسی که لینک تست را برایت فرستاد") +
-          " بفرست.",
-      ),
-    );
+    box.appendChild(el("h1", null, "جواب‌ها هنوز ارسال نشده‌اند"));
+    box.appendChild(el("p", null, "دوباره امتحان کن یا فایل نتیجه را برای " + TO + " بفرست."));
 
     var row = el("div", { class: "uxd-row" });
     var msg = el("p", { class: "uxd-msg", "aria-live": "polite" });
 
     if (canShareFile) {
-      var share = el("button", { type: "button", class: "uxd-main" }, "ارسال فایل نتیجه (بله، تلگرام، …)");
+      var share = el("button", { type: "button", class: "uxd-main" }, "فرستادن فایل نتیجه");
       share.onclick = function () {
         navigator.share({ files: [file], title: "نتیجهٔ تست Castel" }).then(
           function () {
-            msg.textContent = "ممنون! اگر فایل را فرستادی، کار تمام است.";
+            msg.textContent = "اگر فایل را برای " + TO + " ارسال کردی، می‌توانی صفحه را ببندی.";
           },
           function () {},
         );
@@ -100,7 +92,7 @@
       setTimeout(function () {
         URL.revokeObjectURL(url);
       }, 2000);
-      msg.textContent = "فایل دانلود شد. حالا آن را در بله بفرست.";
+      msg.textContent = "بعد از دانلود، فایل را برای " + TO + " بفرست.";
     };
     row.appendChild(dl);
 
@@ -110,41 +102,41 @@
       ta.select();
     });
 
-    var cp = el("button", { type: "button", class: "uxd-sub" }, "کپی کد");
+    var cp = el("button", { type: "button", class: "uxd-sub" }, "کپی کد نتیجه");
     cp.onclick = function () {
       navigator.clipboard.writeText(opts.code).then(
         function () {
-          msg.textContent = "کد کپی شد. آن را در بله بفرست.";
+          msg.textContent = "کد کپی شد. آن را برای " + TO + " بفرست.";
         },
         function () {
           ta.focus();
           ta.select();
-          msg.textContent = "کد را انتخاب کردیم. آن را کپی کن.";
+          msg.textContent = "متن کد انتخاب شده. آن را کپی کن و برای " + TO + " بفرست.";
         },
       );
     };
     row.appendChild(cp);
 
     if (window.UXSubmit && UXSubmit.ready) {
-      var retry = el("button", { type: "button", class: "uxd-sub" }, "دوباره ارسال کن");
+      var retry = el("button", { type: "button", class: "uxd-sub" }, "ارسال دوباره");
       retry.onclick = function () {
         retry.disabled = true;
-        msg.textContent = "در حال ارسال…";
+        msg.textContent = "در حال ارسال جواب‌ها…";
         UXSubmit.flush().then(function (sent) {
           retry.disabled = false;
           if (sent.indexOf(opts.runId) >= 0) thanks(root);
-          else msg.textContent = "باز هم ارسال نشد. اتصال اینترنت را بررسی کن، یا فایل را در بله بفرست.";
+          else msg.textContent = "جواب‌ها هنوز ارسال نشده‌اند. اتصال اینترنت را بررسی کن و دوباره امتحان کن یا فایل نتیجه را بفرست.";
         });
       };
       row.insertBefore(retry, row.firstChild);
       box.appendChild(
-        el("p", null, "اگر الان نفرستی هم اشکالی ندارد: دفعهٔ بعد که این صفحه را باز کنی، خودش دوباره ارسال می‌کند."),
+        el("p", null, "اگر الان فرصت نداری، بعداً همین صفحه را باز کن تا ارسال خودکار دوباره امتحان شود."),
       );
     }
     box.appendChild(row);
     box.appendChild(msg);
     var more = el("details");
-    more.appendChild(el("summary", null, "کد نتیجه (اگر فایل کار نکرد، این متن را بفرست)"));
+    more.appendChild(el("summary", null, "اگر فایل را نتوانستی بفرستی، کد نتیجه را بفرست"));
     more.appendChild(ta);
     box.appendChild(more);
 
@@ -157,7 +149,7 @@
     root.innerHTML = "";
     var box = el("div", { class: "uxd", style: "text-align:center" });
     box.appendChild(el("h1", null, "ممنون! جواب‌هایت ثبت شد."));
-    box.appendChild(el("p", null, "می‌توانی این صفحه را ببندی."));
+    box.appendChild(el("p", null, "حالا می‌توانی صفحه را ببندی."));
     root.appendChild(box);
   }
 

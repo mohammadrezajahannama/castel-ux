@@ -27,8 +27,7 @@ The UX testing platform of Castel. It runs on GitHub Pages, with no server.
 - Repo secret `UX_SUBMIT_TOKEN`: a fine-grained token with Issues read and write on `castel-ux-results` only. The build
   writes it into the site (`_site/shared/submit-token.js`); it is never committed. It can only post and read
   encrypted results.
-- `site/shared/config.js`: `UX_PUBLIC_KEY` (the admin's public key, from the panel's key page), `UX_RESULTS_REPO`,
-  and `UX_CONTACT` (the admin's Bale ID, shown when a tester must send a file).
+- `site/shared/config.js`: `UX_PUBLIC_KEY` (the admin's public key) and `UX_RESULTS_REPO`.
 - `site/shared/admin-vault.json`: the admin's private key, encrypted with the admin username and password
   (PBKDF2-SHA-256, 600,000 rounds, then AES-256-GCM). The panel's first visit creates it (with `UX_PUBLIC_KEY`);
   signing in opens it. It is public, so the password must be strong, and a forgotten password can't be reset.

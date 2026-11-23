@@ -1,9 +1,5 @@
 /* Site settings shared by every test page. */
 
-// The admin's Bale ID that testers send the result file to when automatic sending fails, e.g. "@castel_ux".
-// Empty: "the person who sent you the link".
-window.UX_CONTACT = "";
-
 // The private repo that receives results as issues (see ux-submit.js).
 window.UX_RESULTS_REPO = "mohammadrezajahannama/castel-ux-results";
 
