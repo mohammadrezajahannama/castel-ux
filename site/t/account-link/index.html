@@ -746,12 +746,15 @@ const Admin = (() => {
     </tbody></table></div></div>`;
   }
   function heat(v) {
+    // Until the admin picks one, show the scenario with the most runs (a fixed default can show an empty map).
+    const per = Object.fromEntries(SC.map(s => [s, data().filter(r => r.scenario === s).length]));
     if (F.sc !== 'all') hm.sc = F.sc;
-    v.innerHTML = `<div class="bar"><span class="mini">سناریو</span><div class="seg" data-h="sc">${SC.map(s => `<button data-v="${s}">${s.toUpperCase()}</button>`).join('')}</div>
+    else if (!hm.picked) hm.sc = SC.reduce((best, s) => per[s] > per[best] ? s : best, SC[0]);
+    v.innerHTML = `<div class="bar"><span class="mini">سناریو</span><div class="seg" data-h="sc">${SC.map(s => `<button data-v="${s}">${s.toUpperCase()} (${FA(per[s])})</button>`).join('')}</div>
       <span class="mini">صفحه</span><div class="seg" data-h="screen" style="flex-wrap:wrap">${SCREENS.map(([id, t]) => `<button data-v="${id}">${t.split(' · ')[0] === t ? 'راهنما' : t.split(' (')[0]}</button>`).join('')}</div>
       <span class="mini">نوع</span><div class="seg" data-h="kind"><button data-v="click">کلیک و لمس</button><button data-v="move">حرکت ماوس</button></div></div>
       <div class="heat"><div id="hwrap"></div><div id="hinfo"></div></div>`;
-    v.querySelectorAll('.seg[data-h]').forEach(s => s.querySelectorAll('button').forEach(b => { b.classList.toggle('on', String(hm[s.dataset.h]) === b.dataset.v); b.onclick = () => { hm[s.dataset.h] = b.dataset.v; heat(v); }; }));
+    v.querySelectorAll('.seg[data-h]').forEach(s => s.querySelectorAll('button').forEach(b => { b.classList.toggle('on', String(hm[s.dataset.h]) === b.dataset.v); b.onclick = () => { hm[s.dataset.h] = b.dataset.v; if (s.dataset.h === 'sc') hm.picked = true; heat(v); }; }));
     const rows = data().filter(r => r.scenario === hm.sc);
     const wrap = document.getElementById('hwrap'), k = Math.min(1, (innerWidth - 40) / 390);
     wrap.style.width = 390 * k + 'px'; wrap.style.height = 848 * k + 'px';
