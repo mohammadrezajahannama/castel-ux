@@ -4,7 +4,7 @@ export interface AccountLinkRun {
   test?: string;
   id: string;
   scenario: "a" | "b" | "c";
-  assigned: "random" | "link";
+  assigned: "random" | "balanced" | "link";
   device: "mobile" | "desktop";
   vw: number;
   startedAt: number;

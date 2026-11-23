@@ -2,7 +2,8 @@ import { m } from "@/paraglide/messages.js";
 import { useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { FileUp, Monitor, RefreshCw, Smartphone } from "lucide-react";
+import { Download, FileUp, Monitor, RefreshCw, Smartphone } from "lucide-react";
+import { useSearch } from "@tanstack/react-router";
 import {
   DataTable,
   DataTableFeatures,
@@ -18,7 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DialogButton } from "@/components/dialog-button";
 import { formatNumber } from "@/lib/utils";
-import { loadRuns, pageOf, runsQueryKey, useRuns } from "@/features/results/services";
+import { filterRows, loadRuns, pageOf, runsQueryKey, useRuns } from "@/features/results/services";
+import { downloadCsv } from "@/features/results/csv";
 import { ImportForm } from "@/features/results/components/import-form";
 import { ScenarioCompare } from "@/features/results/components/scenario-compare";
 import type { RunRow } from "@/features/results/types";
@@ -89,6 +91,7 @@ const score = (value: number | null, of: number) =>
 export const ResultsTable = () => {
   const queryClient = useQueryClient();
   const runs = useRuns();
+  const search = useSearch({ from: "/_main/" });
 
   // Every run is loaded once (the query above); the table pages, sorts and filters them here.
   const queryFn = useMemo(
@@ -221,6 +224,17 @@ export const ResultsTable = () => {
           >
             <RefreshCw />
             {m.results_refresh()}
+          </Button>,
+          <Button
+            key="csv"
+            size="sm"
+            variant="outline"
+            disabled={!runs.data?.rows.length}
+            // The rows the filters keep, every page.
+            onClick={() => runs.data && downloadCsv(filterRows(runs.data.rows, search.filters))}
+          >
+            <Download />
+            {m.results_csv()}
           </Button>,
           <DialogButton
             key="import"

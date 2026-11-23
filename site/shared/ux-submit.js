@@ -8,7 +8,8 @@
  * Results wait in a queue in localStorage until GitHub accepts them, so a dropped connection or a closed tab
  * loses nothing: every page that loads this file sends what is still waiting.
  *
- * Usage: await UXSubmit.submit({ code, testId, runId })  → true when sent.
+ * Usage: await UXSubmit.submit({ code, testId, runId, variant })  → true when sent.
+ *        await UXSubmit.counts(testId)  → { a: 4, b: 3, … } runs so far per variant, or null.
  */
 (function () {
   "use strict";
@@ -86,7 +87,8 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: "ux:" + item.testId + ":" + item.runId,
+        // The variant (e.g. the scenario) is in the title, so pages can balance groups without opening results.
+        title: "ux:" + item.testId + ":" + item.runId + (item.variant ? ":" + item.variant : ""),
         body: "```\n" + item.payload + "\n```",
       }),
     })
@@ -144,7 +146,7 @@
     var q = readQueue().filter(function (x) {
       return x.runId !== opts.runId;
     });
-    q.push({ testId: opts.testId, runId: opts.runId, payload: payload, at: Date.now() });
+    q.push({ testId: opts.testId, runId: opts.runId, variant: opts.variant || "", payload: payload, at: Date.now() });
     writeQueue(q);
     for (var delay of [0, 3000, 8000]) {
       if (delay) await wait(delay);
@@ -163,7 +165,38 @@
     return readQueue().length;
   }
 
-  window.UXSubmit = { ready: ready, submit: submit, flush: flush, pending: pending };
+  // How many runs of a test each variant has so far (one per run, partial or whole), from the issue titles.
+  // Resolves null when GitHub can't be reached within `timeout` ms.
+  function counts(testId, timeout) {
+    if (!ready) return Promise.resolve(null);
+    var prefix = "ux:" + testId + ":";
+    var seen = {};
+    var result = {};
+    var work = (async function () {
+      for (var page = 1; page <= 5; page++) {
+        var r = await fetch(
+          "https://api.github.com/repos/" + REPO + "/issues?state=all&per_page=100&page=" + page,
+          { headers: { Authorization: "Bearer " + TOKEN, Accept: "application/vnd.github+json" } },
+        );
+        if (!r.ok) return null;
+        var batch = await r.json();
+        for (var issue of batch) {
+          if (issue.pull_request || issue.title.indexOf(prefix) !== 0) continue;
+          var parts = issue.title.slice(prefix.length).split(":");
+          if (!parts[1] || seen[parts[0]]) continue;
+          seen[parts[0]] = true;
+          result[parts[1]] = (result[parts[1]] || 0) + 1;
+        }
+        if (batch.length < 100) break;
+      }
+      return result;
+    })().catch(function () {
+      return null;
+    });
+    return Promise.race([work, wait(timeout || 2500).then(function () { return null; })]);
+  }
+
+  window.UXSubmit = { ready: ready, submit: submit, flush: flush, pending: pending, counts: counts };
 
   // Results left from an earlier visit: send them now, and again when the connection comes back.
   if (ready) {

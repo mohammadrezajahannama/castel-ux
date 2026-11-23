@@ -383,6 +383,7 @@ const route = () => (location.hash || '').replace('#', '');
 function boot() {
   const r = route();
   if (r === 'admin') { location.replace('../../admin/'); return; }
+  if (r === 'report') return Admin.start();
   Test.start(/^scenario-[abc]$/.test(r) ? r.slice(-1) : null);
 }
 window.addEventListener('hashchange', () => location.reload());
@@ -393,12 +394,27 @@ window.addEventListener('hashchange', () => location.reload());
 const Test = (() => {
   let S, phoneEl, scr, cdTimer, toastT, saveChain = Promise.resolve(), canWrite = null;
   const isDesk = () => matchMedia('(pointer:fine)').matches && innerWidth >= 860;
-  function start(forced) {
-    let sc = forced;
-    if (!sc) { try { sc = sessionStorage.getItem('castel-sc'); } catch (e) {} }
-    if (!sc) sc = 'abc'[Math.floor(Math.random() * 3)];
+  // The scenario: from the link (#scenario-a), kept for this tab, or picked so the three groups stay about the same size:
+  // scenarios with fewer runs so far are likelier, still at random (UXSubmit.counts reads the runs already sent).
+  let pick = null;
+  async function pickScenario(forced) {
+    if (forced) return {sc:forced, how:'link'};
+    let kept = null; try { kept = sessionStorage.getItem('castel-sc'); } catch (e) {}
+    if (kept) return {sc:kept, how:'kept'};
+    let counts = null;
+    try { counts = window.UXSubmit ? await UXSubmit.counts('account-link', 2500) : null; } catch (e) {}
+    let sc;
+    if (counts) {
+      const n = ['a', 'b', 'c'].map(k => counts[k] || 0), max = Math.max(...n);
+      const w = n.map(x => max - x + 1), sum = w[0] + w[1] + w[2];
+      let r = Math.random() * sum; sc = 'c'; for (let i = 0; i < 3; i++) { if ((r -= w[i]) < 0) { sc = 'abc'[i]; break; } }
+    } else sc = 'abc'[Math.floor(Math.random() * 3)];
     try { sessionStorage.setItem('castel-sc', sc); } catch (e) {}
-    S = {id:'s' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), scenario:sc, assigned:forced ? 'link' : 'random', device:isDesk() ? 'desktop' : 'mobile',
+    return {sc, how:counts ? 'balanced' : 'random'};
+  }
+  function start(forced) {
+    pick = pickScenario(forced);
+    S = {id:'s' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), scenario:null, assigned:null, device:isDesk() ? 'desktop' : 'mobile',
       vw:innerWidth, startedAt:Date.now(), screen:null, enterAt:0, times:{}, reached:[], clicks:[], moves:{}, sel:null, checks:[false, false, false],
       cancels:0, backs:0, restarts:0, holdAttempts:0, disabledTaps:0, outcome:'abandoned', endScreen:null, choice:null, answers:null, cdEnd:0};
     intro();
@@ -413,7 +429,18 @@ const Test = (() => {
     <p style="margin:0">می‌خواهی از این به بعد فقط با یک حساب، هم در بله و هم در تلگرام بازی کنی. برایت مهم است <b>قلعهٔ قوی‌ترت را از دست ندهی.</b></p></div>
     <p>از صفحهٔ حساب‌ها در بله شروع کن. هر وقت فکر کردی کار تمام شده یا نمی‌خواهی ادامه بدهی، همان‌جا متوقف شو.</p>
     <button class="cta" id="go">شروع تست</button></div></div>`;
-    document.getElementById('go').onclick = () => { S.startedAt = Date.now(); stage(); go('s1'); };
+    document.getElementById('go').onclick = async e => {
+      e.target.disabled = true;
+      const p = await pick; S.scenario = p.sc; S.assigned = p.how === 'link' ? 'link' : p.how === 'balanced' ? 'balanced' : 'random';
+      S.startedAt = Date.now(); stage(); go('s1');
+    };
+    // Someone who leaves mid-task (switches app, closes the tab) still counts: what they did so far is sent once,
+    // as "abandoned". If they come back and finish, the full result replaces it in the panel.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'hidden' || !S.screen || S.answers || S.partialSent || !window.UXSubmit) return;
+      S.partialSent = true;
+      encode(record()).then(code => UXSubmit.submit({code, testId:'account-link', runId:S.id, variant:S.scenario}));
+    });
   }
   function stage() {
     app.innerHTML = `<div class="wrap"><div class="stage"><aside class="side panel"><h2>هدف تو</h2>
@@ -561,7 +588,7 @@ const Test = (() => {
     const code = await encode(record());
     app.innerHTML = '<div class="wrap"><div class="panel lead" id="uxd" style="max-width:720px;margin:0 auto;text-align:center"><h1>در حال ارسال جواب‌ها…</h1><p>چند ثانیه صبر کن و صفحه را نبند.</p></div></div>';
     const box = document.getElementById('uxd');
-    const opts = {code, testId:'account-link', runId:S.id};
+    const opts = {code, testId:'account-link', runId:S.id, variant:S.scenario};
     if (window.UXSubmit && await UXSubmit.submit(opts)) UXDeliver.thanks(box);
     else { box.removeAttribute('style'); box.classList.remove('lead'); UXDeliver.render(box, opts); }
   }
@@ -578,8 +605,12 @@ const Admin = (() => {
   let impMsg = '';
   const ANS = {deleted:'حذف شد', transfer_kept:'منتقل شد و هنوز هست', unchanged:'بدون تغییر', coins:'سکه', castle:'قلعه', troops:'نیروها', settings:'بله، از تنظیمات', support:'بله، با پشتیبانی', no:'نه', nothing:'هیچ', see:'فقط می‌بیند', connect:'وصل می‌کند', dk:'نمی‌دانم'};
   const SC = ['a', 'b', 'c'], COL = {a:'#fad08c', b:'#6fb7ff', c:'#59c56e'};
+  // The admin panel shows this report in a frame and hands it the decrypted runs (window.parent.UX_ADMIN).
+  const host = (() => { try { return window.parent !== window && window.parent.UX_ADMIN ? window.parent.UX_ADMIN : null; } catch (e) { return null; } })();
   async function start() {
     app.innerHTML = `<div class="adm"><p class="status">در حال بارگذاری…</p></div>`;
+    if (host) { shell(); load(); setInterval(load, 60000); return; }
+    if (route() === 'report') { app.innerHTML = `<div class="adm"><div class="empty"><h1 style="font-size:24px">گزارش</h1><p>این گزارش داخل پنل ادمین باز می‌شود.</p><p><a href="../../admin/" style="color:#fad08c">رفتن به پنل ادمین</a></p></div></div>`; return; }
     await caps;
     let allowed = false;
     try { allowed = !!(USER && ((await USER.isOwner()) || (await USER.canEdit()))); } catch (e) {}
@@ -595,6 +626,7 @@ const Admin = (() => {
     const s = document.getElementById('st');
     loadT = setTimeout(() => { if (s) s.textContent = 'اتصال به پایگاه داده هنوز برقرار نشده؛ ممکن است داده‌ها کامل نباشند.'; }, 10000);
     try {
+      if (host) { const out = await host.getRuns(); clearTimeout(loadT); ALL = out; draw(); return; }
       const users = await DB.collection('sessions').get(); const out = [];
       for (const u of users.docs) {
         const runs = await DB.collection('sessions/' + u.id + '/runs').get();
@@ -613,11 +645,11 @@ const Admin = (() => {
     <div class="bar"><span class="mini">سناریو</span><div class="seg" data-f="sc">${[['all', 'همه'], ['a', 'A'], ['b', 'B'], ['c', 'C']].map(([v, t]) => `<button data-v="${v}">${t}</button>`).join('')}</div>
     <span class="mini">دستگاه</span><div class="seg" data-f="dev">${[['all', 'همه'], ['desktop', 'دسکتاپ'], ['mobile', 'موبایل']].map(([v, t]) => `<button data-v="${v}">${t}</button>`).join('')}</div>
     <span class="mini">وضعیت</span><div class="seg" data-f="st">${[['all', 'همه'], ['done', 'جواب داده'], ['completed', 'اتصال کامل'], ['cancelled', 'لغو کرده'], ['abandoned', 'نیمه‌کاره']].map(([v, t]) => `<button data-v="${v}">${t}</button>`).join('')}</div></div>
-    <div class="tabs">${[['overview', 'خلاصه و برنده'], ['questions', 'سؤال‌ها'], ['funnel', 'قیف و زمان'], ['heat', 'هیت‌مپ'], ['rows', 'پاسخ‌ها'], ['import', 'افزودن کد و لینک‌ها']].map(([v, t]) => `<button data-tab="${v}">${t}</button>`).join('')}</div>
+    <div class="tabs">${[['overview', 'خلاصه و برنده'], ['questions', 'سؤال‌ها'], ['funnel', 'قیف و زمان'], ['heat', 'هیت‌مپ'], ['rows', 'پاسخ‌ها'], ['import', 'افزودن کد و لینک‌ها']].filter(([v]) => !(host && v === 'import')).map(([v, t]) => `<button data-tab="${v}">${t}</button>`).join('')}</div>
     <div id="view"></div></div>`;
     app.querySelectorAll('.seg[data-f] button').forEach(b => b.onclick = () => { F[b.parentNode.dataset.f] = b.dataset.v; draw(); });
     app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; sel = null; draw(); });
-    document.getElementById('refresh').onclick = () => load();
+    document.getElementById('refresh').onclick = () => { if (host && host.refresh) host.refresh().then(load); else load(); };
   }
   const data = () => {
     const seen = new Set(); const all = [...ALL, ...local].filter(r => r && r.id && !seen.has(r.id) && seen.add(r.id));
@@ -763,7 +795,8 @@ const Admin = (() => {
     ${r.answers.q7 ? `<p style="margin-top:12px">«${esc(r.answers.q7)}»</p>` : ''}` : '<p class="mini">این نفر به سؤال‌ها نرسید.</p>'}
     <h3 style="margin-top:16px;font-size:15px">زمان روی هر صفحه</h3><p class="mini">${Object.entries(r.times || {}).map(([k, t]) => `${k}: ${FA((t / 1000).toFixed(1))}ث`).join(' · ')}</p>
     <h3 style="margin-top:12px;font-size:15px">ترتیب کلیک‌ها</h3><p class="mini">${(r.clicks || []).filter(c => c.a).map(c => `${c.s}→${esc(actName(c.a))}`).join(' · ') || '—'}</p>
-    <button class="abtn danger" id="del" style="margin-top:12px">حذف این جلسه</button> <span id="delm" class="status"></span></div>`;
+    ${host ? '' : '<button class="abtn danger" id="del" style="margin-top:12px">حذف این جلسه</button> <span id="delm" class="status"></span>'}</div>`;
+    if (host) return;
     let armed = false;
     document.getElementById('del').onclick = async e => {
       if (!armed) { armed = true; e.target.textContent = 'برای حذف دوباره بزن (برگشت ندارد)'; return; }

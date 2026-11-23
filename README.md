@@ -8,14 +8,19 @@ The UX testing platform of Castel. It runs on GitHub Pages, with no server.
 
 ## How a result travels
 
-1. The tester takes the test. The page records the task (screens, clicks for the heatmap, times) and the answers.
+1. The tester opens the link. The page picks a scenario at random, weighted toward the scenarios with fewer runs so
+   far (`UXSubmit.counts` reads the issue titles), so the groups stay about the same size. A link with `#scenario-a`
+   forces one. The page records the task (screens, clicks for the heatmap, times) and the answers. A tester who leaves
+   mid-task (switches app, closes the tab) is sent once as "abandoned"; finishing later replaces it.
 2. At the end, the page packs the result into a code (`CASTEL1…`), encrypts it with the admin's public key, and posts it
    as an issue in the private repo `castel-ux-results` (`site/shared/ux-submit.js`). Nothing more is asked of the tester.
 3. A result that can't be sent waits in the tester's browser, and every later visit to the site sends it. If sending
    fails three times, the page also offers the result as a file or a code (`site/shared/ux-delivery.js`).
 4. The admin panel reads the issues and opens them with the admin's private key, unlocked by the admin's username
    and password.
-   Results sent by hand are added with "Add from file".
+   Results sent by hand are added with "Add from file". "Export CSV" downloads the filtered runs. "Detailed report"
+   frames the test page's own report (`#report`: summary, questions, funnel and time, heatmaps, answers) and hands it
+   the decrypted runs through `window.UX_ADMIN`.
 
 ### Settings
 

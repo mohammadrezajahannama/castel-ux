@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
+import { Route as MainReportRouteImport } from './routes/_main/report'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -27,27 +28,35 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRoute,
 } as any)
+const MainReportRoute = MainReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => MainRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/auth': typeof AuthRoute
+  '/report': typeof MainReportRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/report': typeof MainReportRoute
   '/': typeof MainIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_main': typeof MainRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_main/report': typeof MainReportRoute
   '/_main/': typeof MainIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth'
+  fullPaths: '/' | '/auth' | '/report'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/'
-  id: '__root__' | '/_main' | '/auth' | '/_main/'
+  to: '/auth' | '/report' | '/'
+  id: '__root__' | '/_main' | '/auth' | '/_main/report' | '/_main/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,14 +87,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_main/report': {
+      id: '/_main/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof MainReportRouteImport
+      parentRoute: typeof MainRoute
+    }
   }
 }
 
 interface MainRouteChildren {
+  MainReportRoute: typeof MainReportRoute
   MainIndexRoute: typeof MainIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
+  MainReportRoute: MainReportRoute,
   MainIndexRoute: MainIndexRoute,
 }
 
