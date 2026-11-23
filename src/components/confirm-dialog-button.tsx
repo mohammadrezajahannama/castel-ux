@@ -1,0 +1,156 @@
+import { m } from "@/paraglide/messages.js";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button, ButtonProps } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { AlertTriangle, LucideIcon } from "lucide-react";
+import { ReactNode, useState } from "react";
+
+interface ConfirmDialogButtonProps extends Omit<ButtonProps, "onClick" | "form"> {
+  /** Visible trigger label. An icon-only trigger (no title/children) needs a `tooltip`. */
+  title?: string;
+  /** Shown on hover, and an icon-only trigger's `aria-label`. */
+  tooltip?: string;
+  icon?: LucideIcon;
+  /** Runs on confirm. Return a promise (e.g. `mutation.mutateAsync(...)`): the dialog closes when it resolves
+   * and stays open, ready to retry, when it rejects. */
+  onOk: () => unknown;
+  okTitle?: string;
+  okVariant?: "default" | "destructive" | "success";
+  cancelTitle?: string;
+  titleDialog?: string;
+  descriptionDialog?: string | ReactNode;
+  iconDialog?: LucideIcon;
+  // When set, the user must type this exact text into an input before the OK button enables.
+  confirmText?: string;
+  confirmTextLabel?: string;
+}
+
+export const ConfirmDialogButton = ({
+  onOk,
+  okTitle,
+  okVariant = "default",
+  cancelTitle,
+  title,
+  tooltip,
+  descriptionDialog,
+  icon: Icon,
+  iconDialog: DialogIcon = AlertTriangle,
+  titleDialog,
+  loading,
+  children,
+  confirmText,
+  confirmTextLabel,
+  ...buttonProps
+}: ConfirmDialogButtonProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [typed, setTyped] = useState("");
+
+  const busy = isLoading || !!loading;
+  const typingGateOk = !confirmText || typed === confirmText;
+  // The message's {x} is the text to type; splitting around a marker lets it be highlighted in any language.
+  const [typeBefore, typeAfter] = m.type_x_to_confirm({ x: "\u0000" }).split("\u0000");
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) setTyped("");
+    setIsOpen(open);
+  };
+
+  const handleConfirm = async () => {
+    if (!typingGateOk || busy) return;
+
+    setIsLoading(true);
+    try {
+      await onOk();
+      setIsOpen(false);
+    } catch (error) {
+      // The failing call reports its own error (e.g. the API client's toast); keep the dialog open for a retry.
+      console.error("Confirm action failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const button = <Button aria-label={!title && !children ? tooltip : undefined} {...buttonProps} />;
+  const trigger = (
+    <AlertDialogTrigger render={tooltip ? <TooltipTrigger render={button} /> : button}>
+      {Icon && <Icon />}
+      {title}
+      {children}
+    </AlertDialogTrigger>
+  );
+
+  return (
+    <AlertDialog onOpenChange={handleOpenChange} open={isOpen}>
+      {tooltip ? (
+        <Tooltip>
+          {trigger}
+          <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      )}
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex items-center gap-2">
+            <DialogIcon className={cn("size-5", okVariant === "destructive" ? "text-destructive" : "text-amber-500")} />
+            {titleDialog || m.are_you_sure()}
+          </AlertDialogTitle>
+          <AlertDialogDescription>{descriptionDialog || m.this_action_cannot_be_undone()}</AlertDialogDescription>
+        </AlertDialogHeader>
+        {confirmText && (
+          <div className="space-y-2">
+            <Label htmlFor="confirm-dialog-typing-gate" className="text-sm">
+              {confirmTextLabel || (
+                <span>
+                  {typeBefore}
+                  <span className="font-mono font-semibold text-destructive">{confirmText}</span>
+                  {typeAfter}
+                </span>
+              )}
+            </Label>
+            <Input
+              id="confirm-dialog-typing-gate"
+              autoComplete="off"
+              autoFocus
+              value={typed}
+              placeholder={confirmText}
+              onChange={(e) => setTyped(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleConfirm();
+                }
+              }}
+              className="font-mono"
+            />
+          </div>
+        )}
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={busy}>{cancelTitle || m.cancel()}</AlertDialogCancel>
+          <Button
+            autoFocus={!confirmText}
+            onClick={handleConfirm}
+            variant={okVariant}
+            loading={busy}
+            disabled={!typingGateOk}
+          >
+            {okTitle || m.confirm()}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};

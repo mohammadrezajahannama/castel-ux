@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles.css",
+    "functions": ["clsx", "cn"]
+  },
+  "proseWrap": "never",
+  "printWidth": 120,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "quoteProps": "consistent",
+  "ignorePatterns": ["dist/**", ".output/**", "src/routeTree.gen.ts", "src/paraglide/**", "node_modules/**", "**.md"]
+}
