@@ -12,7 +12,7 @@ export interface AccountLinkRun {
   outcome: "completed" | "cancelled" | "abandoned";
   endScreen: string | null;
   finished: boolean;
-  /** The account kept: "tg" (Tomas, the stronger castle: the right one) or "bale". */
+  /** The account kept: "tg" (Taha, the stronger castle: the right one) or "bale". */
   choice: "tg" | "bale" | null;
   choiceCorrect: boolean | null;
   cancels: number;
