@@ -1,110 +1,171 @@
 import { m } from "@/paraglide/messages.js";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Copy, Download, FileKey, KeyRound } from "lucide-react";
+import { Copy, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ConfirmDialogButton } from "@/components/confirm-dialog-button";
-import { createKeyFile, downloadKeyFile, type KeyFile, publicKeyConfig, saveKeyFile } from "@/features/results/crypto";
+import { Textarea } from "@/components/ui/textarea";
+import { createVault, loadVault, MIN_PASSWORD, unlockVault, type Vault } from "@/features/results/crypto";
 
-/** The public key, to copy into the test pages' config. */
-export function PublicKeyBox({ file }: { file: KeyFile }) {
-  const text = publicKeyConfig(file);
+function Field({ id, label, ...props }: { id: string; label: string } & React.ComponentProps<typeof Input>) {
   return (
     <div className="grid gap-2">
-      <Label htmlFor="public-key">
-        {m.key_public_label()} · {m.key_id()}: <code dir="ltr">{file.kid}</code>
-      </Label>
-      <Textarea id="public-key" dir="ltr" readOnly value={text} className="h-28 font-mono text-xs" />
-      <Button
-        variant="outline"
-        onClick={() => navigator.clipboard.writeText(text).then(() => toast.success(m.key_copied()))}
-      >
-        <Copy />
-        {m.key_copy()}
-      </Button>
+      <Label htmlFor={id}>{label}</Label>
+      <Input id={id} dir="ltr" {...props} />
     </div>
   );
 }
 
-/** The login page's body: load the key from its backup file, or create the key the first time. */
-export function KeySetup() {
+/** Signing in: the username and password open the admin vault. */
+function SignInForm({ vault }: { vault: Vault }) {
   const navigate = useNavigate();
-  const [created, setCreated] = useState<KeyFile | null>(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  const loadFile = async (file?: File) => {
-    if (!file) return;
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setBusy(true);
+    const ok = await unlockVault(vault, username, password, remember);
+    setBusy(false);
+    if (ok) navigate({ to: "/" });
+    else toast.error(m.login_wrong());
+  };
+
+  return (
+    <form className="flex flex-col gap-6" onSubmit={submit}>
+      <div className="flex flex-col gap-2 text-center">
+        <h1 className="text-2xl font-bold">{m.login_title()}</h1>
+        <p className="text-sm text-balance text-muted-foreground">{m.login_description()}</p>
+      </div>
+      <Field
+        id="username"
+        label={m.login_username()}
+        autoComplete="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+      />
+      <Field
+        id="password"
+        label={m.login_password()}
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <Label className="flex items-center gap-2 font-normal">
+        <Checkbox checked={remember} onCheckedChange={(value) => setRemember(value === true)} />
+        {m.login_remember()}
+      </Label>
+      <Button type="submit" disabled={busy}>
+        {busy && <LoaderCircle className="animate-spin" />}
+        {m.login_submit()}
+      </Button>
+    </form>
+  );
+}
+
+/** The first visit, before the site has a vault: pick the username and password, then send the vault to be added. */
+function SetupForm() {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeat, setRepeat] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [vault, setVault] = useState<Vault | null>(null);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (password.length < MIN_PASSWORD) {
+      toast.error(m.setup_password_short({ count: String(MIN_PASSWORD) }));
+      return;
+    }
+    if (password !== repeat) {
+      toast.error(m.setup_password_mismatch());
+      return;
+    }
+    setBusy(true);
     try {
-      saveKeyFile(await file.text());
-      navigate({ to: "/" });
-    } catch {
-      toast.error(m.key_bad_file());
+      setVault(await createVault(username, password));
+    } finally {
+      setBusy(false);
     }
   };
 
-  const create = async () => {
-    const file = await createKeyFile();
-    downloadKeyFile(file);
-    saveKeyFile(JSON.stringify(file));
-    setCreated(file);
-  };
-
-  if (created) {
+  if (vault) {
+    const text = JSON.stringify(vault);
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">{m.key_created_title()}</h1>
-        <p className="text-sm text-muted-foreground">{m.key_created_body()}</p>
-        <PublicKeyBox file={created} />
-        <Button variant="ghost" onClick={() => downloadKeyFile(created)}>
-          <Download />
-          {m.key_download_again()}
+        <h1 className="text-2xl font-bold">{m.setup_done_title()}</h1>
+        <p className="text-sm text-muted-foreground">{m.setup_done_body()}</p>
+        <Textarea dir="ltr" readOnly value={text} className="h-32 font-mono text-xs" />
+        <Button
+          variant="outline"
+          onClick={() => navigator.clipboard.writeText(text).then(() => toast.success(m.key_copied()))}
+        >
+          <Copy />
+          {m.setup_copy()}
         </Button>
-        <Button onClick={() => navigate({ to: "/" })}>{m.key_enter()}</Button>
+        <Button onClick={() => navigate({ to: "/" })}>{m.setup_enter()}</Button>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <form className="flex flex-col gap-6" onSubmit={submit}>
       <div className="flex flex-col gap-2 text-center">
-        <h1 className="text-2xl font-bold">{m.key_title()}</h1>
-        <p className="text-sm text-balance text-muted-foreground">{m.key_intro()}</p>
+        <h1 className="text-2xl font-bold">{m.setup_title()}</h1>
+        <p className="text-sm text-balance text-muted-foreground">{m.setup_description()}</p>
       </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="key-file">{m.key_load()}</Label>
-        <label
-          htmlFor="key-file"
-          className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-        >
-          <FileKey className="size-4" />
-          {m.key_load()}
-        </label>
-        <input
-          id="key-file"
-          type="file"
-          accept=".json,application/json"
-          className="sr-only"
-          onChange={(event) => loadFile(event.target.files?.[0])}
-        />
-        <p className="text-xs text-muted-foreground">{m.key_load_hint()}</p>
-      </div>
-
-      <Alert>
-        <KeyRound />
-        <AlertTitle>{m.key_create()}</AlertTitle>
-        <AlertDescription>{m.key_create_warning()}</AlertDescription>
-      </Alert>
-      <ConfirmDialogButton
-        variant="outline"
-        title={m.key_create()}
-        titleDialog={m.key_create()}
-        descriptionDialog={m.key_create_warning()}
-        onOk={create}
+      <Field
+        id="username"
+        label={m.login_username()}
+        autoComplete="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
       />
-    </div>
+      <Field
+        id="password"
+        label={m.login_password()}
+        type="password"
+        autoComplete="new-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <Field
+        id="repeat"
+        label={m.setup_repeat()}
+        type="password"
+        autoComplete="new-password"
+        value={repeat}
+        onChange={(e) => setRepeat(e.target.value)}
+        required
+      />
+      <Alert>
+        <AlertTitle>{m.setup_warning_title()}</AlertTitle>
+        <AlertDescription>{m.setup_warning({ count: String(MIN_PASSWORD) })}</AlertDescription>
+      </Alert>
+      <Button type="submit" disabled={busy}>
+        {busy && <LoaderCircle className="animate-spin" />}
+        {m.setup_submit()}
+      </Button>
+    </form>
   );
+}
+
+/** The login page's body: sign in, or set the admin account up the first time. */
+export function KeySetup() {
+  const vault = useQuery({ queryKey: ["admin-vault"], queryFn: loadVault, staleTime: Infinity });
+  if (vault.isPending) return <LoaderCircle className="mx-auto animate-spin text-muted-foreground" />;
+  return vault.data ? <SignInForm vault={vault.data} /> : <SetupForm />;
 }

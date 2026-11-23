@@ -1,5 +1,5 @@
 import { m } from "@/paraglide/messages.js";
-import { ChevronRight, KeyRound, LucideProps, Table2 } from "lucide-react";
+import { ChevronRight, LucideProps, Table2 } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -37,11 +37,6 @@ export const navItems: NavItem[] = [
     icon: Table2,
     label: m.results_title,
     route: "/",
-  },
-  {
-    icon: KeyRound,
-    label: m.key_title,
-    route: "/key",
   },
 ];
 

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/auth")({
   beforeLoad: () => {
     if (isLoggedIn()) throw redirect({ to: "/" });
   },
-  head: () => ({ meta: [{ title: `${m.key_title()} · ${m.app_name()}` }] }),
+  head: () => ({ meta: [{ title: `${m.login_title()} · ${m.app_name()}` }] }),
   component: LoginPage,
 });
 

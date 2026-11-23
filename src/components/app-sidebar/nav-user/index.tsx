@@ -14,11 +14,11 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/c
 
 import { ThemeSwitcher } from "@/components/app-sidebar/nav-user/theme-switcher";
 import { LocaleSelect } from "@/components/app-sidebar/nav-user/locale-select";
-import { useNavigate } from "@tanstack/react-router";
-import { getKeyFile } from "@/features/results/crypto";
+import { getSessionKid } from "@/features/results/crypto";
+import { logout } from "@/features/auth/session";
 
 function UserSummary() {
-  const kid = getKeyFile()?.kid;
+  const kid = getSessionKid();
   return (
     <>
       <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-accent">
@@ -36,7 +36,6 @@ function UserSummary() {
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const navigate = useNavigate();
 
   return (
     <SidebarMenu>
@@ -76,8 +75,7 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              {/* Logging out removes the key from this browser, so it asks first, on the key page. */}
-              <DropdownMenuItem onClick={() => navigate({ to: "/key" })}>
+              <DropdownMenuItem onClick={logout}>
                 <LogOut />
                 {m.logout()}
               </DropdownMenuItem>

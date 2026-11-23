@@ -19,7 +19,7 @@
     // submit-token.js (written at build time, not in the repo) sets it reversed and base64-encoded.
     try {
       return window.UX_SUBMIT_TOKEN ? atob(window.UX_SUBMIT_TOKEN).split("").reverse().join("") : "";
-    } catch (e) {
+    } catch {
       return "";
     }
   })();
@@ -62,14 +62,14 @@
   function readQueue() {
     try {
       return JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
-    } catch (e) {
+    } catch {
       return [];
     }
   }
   function writeQueue(q) {
     try {
       localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
-    } catch (e) {}
+    } catch {}
   }
 
   function post(item) {
@@ -137,7 +137,7 @@
     var payload;
     try {
       payload = await encrypt(opts.code);
-    } catch (e) {
+    } catch {
       return false;
     }
     if (payload.length > MAX_BODY) return false;

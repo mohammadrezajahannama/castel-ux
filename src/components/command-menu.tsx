@@ -1,4 +1,5 @@
 import { m } from "@/paraglide/messages.js";
+import { logout } from "@/features/auth/session";
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useTheme } from "next-themes";
@@ -35,7 +36,6 @@ export function CommandMenu() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const { resolvedTheme, setTheme } = useTheme();
-  const query = search.trim();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -101,7 +101,7 @@ export function CommandMenu() {
                     {localeLabels[locale]}
                   </CommandItem>
                 ))}
-              <CommandItem onSelect={() => run(() => navigate({ to: "/key" }))}>
+              <CommandItem onSelect={() => run(logout)}>
                 <LogOut />
                 {m.logout()}
               </CommandItem>

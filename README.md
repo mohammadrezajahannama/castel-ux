@@ -13,7 +13,8 @@ The UX testing platform of Castel. It runs on GitHub Pages, with no server.
    as an issue in the private repo `castel-ux-results` (`site/shared/ux-submit.js`). Nothing more is asked of the tester.
 3. A result that can't be sent waits in the tester's browser, and every later visit to the site sends it. If sending
    fails three times, the page also offers the result as a file or a code (`site/shared/ux-delivery.js`).
-4. The admin panel reads the issues and opens them with the admin's private key, which stays in the admin's browser.
+4. The admin panel reads the issues and opens them with the admin's private key, unlocked by the admin's username
+   and password.
    Results sent by hand are added with "Add from file".
 
 ### Settings
@@ -23,8 +24,9 @@ The UX testing platform of Castel. It runs on GitHub Pages, with no server.
   encrypted results.
 - `site/shared/config.js`: `UX_PUBLIC_KEY` (the admin's public key, from the panel's key page), `UX_RESULTS_REPO`,
   and `UX_CONTACT` (the admin's Bale ID, shown when a tester must send a file).
-- The private key is created once on the panel's login page, which downloads a backup file. Without that file, results
-  sent with its public key can't be read.
+- `site/shared/admin-vault.json`: the admin's private key, encrypted with the admin username and password
+  (PBKDF2-SHA-256, 600,000 rounds, then AES-256-GCM). The panel's first visit creates it (with `UX_PUBLIC_KEY`);
+  signing in opens it. It is public, so the password must be strong, and a forgotten password can't be reset.
 
 ## Adding a test
 

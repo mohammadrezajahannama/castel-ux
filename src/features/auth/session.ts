@@ -1,7 +1,7 @@
 import { forgetKey, hasKey } from "@/features/results/crypto";
 
-// There is one admin, and no server: being "logged in" means this browser holds the admin's private key, which is
-// what opens the results (see features/results/crypto.ts).
+// There is one admin, and no server: being "logged in" means the username and password opened the admin vault, and
+// this tab holds the private key that opens the results (see features/results/crypto.ts).
 
 export const isLoggedIn = () => hasKey();
 
@@ -12,7 +12,7 @@ export const setLogoutHandler = (handler: () => void) => {
   onLogout = handler;
 };
 
-/** Removes the key from this browser. Coming back in needs the backup file. */
+/** Forgets the private key in this tab and browser. */
 export const logout = () => {
   forgetKey();
   onLogout();

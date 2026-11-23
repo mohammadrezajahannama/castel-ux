@@ -44,7 +44,7 @@
     // A copy in this browser, so a closed tab does not lose the result.
     try {
       localStorage.setItem("ux-result:" + opts.testId + ":" + opts.runId, opts.code);
-    } catch (e) {}
+    } catch {}
   }
 
   function render(root, opts) {
@@ -59,7 +59,7 @@
     var file = null;
     try {
       file = new File([f.blob], f.name, { type: "text/plain" });
-    } catch (e) {}
+    } catch {}
     var canShareFile = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
 
     var box = el("div", { class: "uxd" });

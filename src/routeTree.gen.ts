@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
-import { Route as MainKeyRouteImport } from './routes/_main/key'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -28,35 +27,27 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRoute,
 } as any)
-const MainKeyRoute = MainKeyRouteImport.update({
-  id: '/key',
-  path: '/key',
-  getParentRoute: () => MainRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/auth': typeof AuthRoute
-  '/key': typeof MainKeyRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
-  '/key': typeof MainKeyRoute
   '/': typeof MainIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_main': typeof MainRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_main/key': typeof MainKeyRoute
   '/_main/': typeof MainIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/key'
+  fullPaths: '/' | '/auth'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/key' | '/'
-  id: '__root__' | '/_main' | '/auth' | '/_main/key' | '/_main/'
+  to: '/auth' | '/'
+  id: '__root__' | '/_main' | '/auth' | '/_main/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,23 +78,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
-    '/_main/key': {
-      id: '/_main/key'
-      path: '/key'
-      fullPath: '/key'
-      preLoaderRoute: typeof MainKeyRouteImport
-      parentRoute: typeof MainRoute
-    }
   }
 }
 
 interface MainRouteChildren {
-  MainKeyRoute: typeof MainKeyRoute
   MainIndexRoute: typeof MainIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
-  MainKeyRoute: MainKeyRoute,
   MainIndexRoute: MainIndexRoute,
 }
 
