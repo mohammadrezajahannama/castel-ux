@@ -6,7 +6,6 @@ import { House, Languages, LogOut, Moon, Search, Sun } from "lucide-react";
 import { getLocale, locales, setLocale } from "@/paraglide/runtime.js";
 import { navItems } from "@/components/app-sidebar/nav-main";
 import { localeLabels } from "@/components/app-sidebar/nav-user/locale-select";
-import { logout } from "@/features/auth/services";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -29,7 +28,7 @@ const pages = navItems.flatMap((item) => [
 
 /**
  * The search box in the header, and the command palette it opens (also with Ctrl+K, or ⌘K on a Mac): go to a page,
- * search the products for what's typed, switch the theme or language, log out.
+ * switch the theme or language, log out.
  */
 export function CommandMenu() {
   const [open, setOpen] = useState(false);
@@ -76,19 +75,6 @@ export function CommandMenu() {
           <CommandList>
             <CommandEmpty>{m.no_items_found()}</CommandEmpty>
 
-            {query && (
-              <CommandGroup heading={m.products_title()}>
-                {/* Its value holds what's typed, so it always matches. */}
-                <CommandItem
-                  value={`search-products ${query}`}
-                  onSelect={() => run(() => navigate({ to: "/products", search: { filters: { q: query } } }))}
-                >
-                  <Search />
-                  {m.search_products_for({ x: query })}
-                </CommandItem>
-              </CommandGroup>
-            )}
-
             <CommandGroup heading={m.navigation()}>
               <CommandItem onSelect={() => run(() => navigate({ to: "/" }))}>
                 <House />
@@ -115,7 +101,7 @@ export function CommandMenu() {
                     {localeLabels[locale]}
                   </CommandItem>
                 ))}
-              <CommandItem onSelect={() => run(logout)}>
+              <CommandItem onSelect={() => run(() => navigate({ to: "/key" }))}>
                 <LogOut />
                 {m.logout()}
               </CommandItem>

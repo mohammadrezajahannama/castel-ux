@@ -1,7 +1,7 @@
 import { createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import qs from "qs";
-import { setLogoutHandler } from "@/features/auth/services";
+import { setLogoutHandler } from "@/features/auth/session";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {

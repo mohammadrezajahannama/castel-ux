@@ -43,3 +43,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 /_site
+/site/shared/submit-token.js

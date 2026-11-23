@@ -1,5 +1,5 @@
 import { m } from "@/paraglide/messages.js";
-import { ChevronRight, LucideProps, ShoppingCart, Package } from "lucide-react";
+import { ChevronRight, KeyRound, LucideProps, Table2 } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -34,14 +34,14 @@ interface NavItem {
 
 export const navItems: NavItem[] = [
   {
-    icon: Package,
-    label: m.products_title,
-    route: "/products",
+    icon: Table2,
+    label: m.results_title,
+    route: "/",
   },
   {
-    icon: ShoppingCart,
-    label: m.orders_title,
-    route: "/orders",
+    icon: KeyRound,
+    label: m.key_title,
+    route: "/key",
   },
 ];
 

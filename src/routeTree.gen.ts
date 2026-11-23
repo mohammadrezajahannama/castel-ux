@@ -12,8 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
-import { Route as MainOrdersRouteImport } from './routes/_main/orders'
-import { Route as MainProductsRouteImport } from './routes/_main/products'
+import { Route as MainKeyRouteImport } from './routes/_main/key'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -29,49 +28,35 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRoute,
 } as any)
-const MainOrdersRoute = MainOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => MainRoute,
-} as any)
-const MainProductsRoute = MainProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
+const MainKeyRoute = MainKeyRouteImport.update({
+  id: '/key',
+  path: '/key',
   getParentRoute: () => MainRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/auth': typeof AuthRoute
-  '/orders': typeof MainOrdersRoute
-  '/products': typeof MainProductsRoute
+  '/key': typeof MainKeyRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
-  '/orders': typeof MainOrdersRoute
-  '/products': typeof MainProductsRoute
+  '/key': typeof MainKeyRoute
   '/': typeof MainIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_main': typeof MainRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_main/orders': typeof MainOrdersRoute
-  '/_main/products': typeof MainProductsRoute
+  '/_main/key': typeof MainKeyRoute
   '/_main/': typeof MainIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/orders' | '/products'
+  fullPaths: '/' | '/auth' | '/key'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/orders' | '/products' | '/'
-  id:
-    | '__root__'
-    | '/_main'
-    | '/auth'
-    | '/_main/orders'
-    | '/_main/products'
-    | '/_main/'
+  to: '/auth' | '/key' | '/'
+  id: '__root__' | '/_main' | '/auth' | '/_main/key' | '/_main/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -102,32 +87,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
-    '/_main/orders': {
-      id: '/_main/orders'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof MainOrdersRouteImport
-      parentRoute: typeof MainRoute
-    }
-    '/_main/products': {
-      id: '/_main/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof MainProductsRouteImport
+    '/_main/key': {
+      id: '/_main/key'
+      path: '/key'
+      fullPath: '/key'
+      preLoaderRoute: typeof MainKeyRouteImport
       parentRoute: typeof MainRoute
     }
   }
 }
 
 interface MainRouteChildren {
-  MainOrdersRoute: typeof MainOrdersRoute
-  MainProductsRoute: typeof MainProductsRoute
+  MainKeyRoute: typeof MainKeyRoute
   MainIndexRoute: typeof MainIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
-  MainOrdersRoute: MainOrdersRoute,
-  MainProductsRoute: MainProductsRoute,
+  MainKeyRoute: MainKeyRoute,
   MainIndexRoute: MainIndexRoute,
 }
 

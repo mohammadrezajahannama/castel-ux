@@ -1,5 +1,5 @@
 import { m } from "@/paraglide/messages.js";
-import { Circle, LucideIcon, PackageCheck, PackageMinus, PackageX } from "lucide-react";
+import { Ban, Circle, CircleCheck, CircleMinus, CircleSlash, LucideIcon, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { convertCase } from "@/lib/utils";
 
@@ -11,9 +11,14 @@ const STATUSES: Record<
   string,
   { variant: "success" | "warning" | "destructive" | "secondary"; icon: LucideIcon; label: () => string }
 > = {
-  in_stock: { variant: "success", icon: PackageCheck, label: m.status_in_stock },
-  low_stock: { variant: "warning", icon: PackageMinus, label: m.status_low_stock },
-  out_of_stock: { variant: "destructive", icon: PackageX, label: m.status_out_of_stock },
+  // A run's task result.
+  success: { variant: "success", icon: CircleCheck, label: m.results_success },
+  wrong: { variant: "destructive", icon: TriangleAlert, label: m.results_wrong },
+  none: { variant: "secondary", icon: CircleMinus, label: m.results_none },
+  // How a run's task ended.
+  completed: { variant: "success", icon: CircleCheck, label: m.outcome_completed },
+  cancelled: { variant: "warning", icon: Ban, label: m.outcome_cancelled },
+  abandoned: { variant: "secondary", icon: CircleSlash, label: m.outcome_abandoned },
 };
 
 /** A status as a badge: coloured by what it means, with its icon so it reads without the colour too. */

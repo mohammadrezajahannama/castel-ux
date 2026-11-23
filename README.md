@@ -9,17 +9,28 @@ The UX testing platform of Castel. It runs on GitHub Pages, with no server.
 ## How a result travels
 
 1. The tester takes the test. The page records the task (screens, clicks for the heatmap, times) and the answers.
-2. At the end, the page packs the result into a code (`CASTEL1…`) and shows it with `UXDeliver` (`site/shared/ux-delivery.js`):
-   share the result file (Bale, Telegram), download it, or copy the code. A copy stays in the tester's browser.
-3. The tester sends the file to the admin. The admin imports it in the panel. The panel keeps results in the private
-   repo `castel-ux-results`.
+2. At the end, the page packs the result into a code (`CASTEL1…`), encrypts it with the admin's public key, and posts it
+   as an issue in the private repo `castel-ux-results` (`site/shared/ux-submit.js`). Nothing more is asked of the tester.
+3. A result that can't be sent waits in the tester's browser, and every later visit to the site sends it. If sending
+   fails three times, the page also offers the result as a file or a code (`site/shared/ux-delivery.js`).
+4. The admin panel reads the issues and opens them with the admin's private key, which stays in the admin's browser.
+   Results sent by hand are added with "Add from file".
 
-Set the admin's Bale ID in `site/shared/config.js` (`UX_CONTACT`).
+### Settings
+
+- Repo secret `UX_SUBMIT_TOKEN`: a fine-grained token with Issues read and write on `castel-ux-results` only. The build
+  writes it into the site (`_site/shared/submit-token.js`); it is never committed. It can only post and read
+  encrypted results.
+- `site/shared/config.js`: `UX_PUBLIC_KEY` (the admin's public key, from the panel's key page), `UX_RESULTS_REPO`,
+  and `UX_CONTACT` (the admin's Bale ID, shown when a tester must send a file).
+- The private key is created once on the panel's login page, which downloads a backup file. Without that file, results
+  sent with its public key can't be read.
 
 ## Adding a test
 
 1. Add `site/t/<test-id>/index.html`. Load `../../shared/fonts.css`, `../../shared/config.js` and `../../shared/ux-delivery.js`.
-2. Put `test: '<test-id>'` in the result, and end with `UXDeliver.render(element, { code, testId, runId })`.
+2. Also load `../../shared/submit-token.js` and `../../shared/ux-submit.js`. Put `test: '<test-id>'` in the result.
+   At the end, `await UXSubmit.submit({ code, testId, runId })`; if it returns false, `UXDeliver.render(element, …)`.
 3. Add a card for it in `site/index.html`.
 
 ## Deploying
@@ -32,7 +43,7 @@ Source must be "GitHub Actions".
 
 ```bash
 yarn install
-yarn dev                      # the admin panel at http://localhost:3000
+yarn dev                      # the admin panel at http://localhost:3000 (results need the deployed token)
 ./scripts/build-site.sh       # the whole site in _site/
 ```
 

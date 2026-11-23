@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="../../shared/fonts.css">
 <script src="../../shared/config.js"></script>
 <script src="../../shared/ux-delivery.js"></script>
+<script src="../../shared/submit-token.js"></script>
+<script src="../../shared/ux-submit.js"></script>
 <style>
 /* VOICE: calm game UI for participants; precise research console for the admin.
    IDEA: a phone held up in a dark war room, a gold-lit console behind it.
@@ -557,8 +559,11 @@ const Test = (() => {
       return;
     }
     const code = await encode(record());
-    app.innerHTML = '<div class="wrap"><div class="panel" id="uxd"></div></div>';
-    UXDeliver.render(document.getElementById('uxd'), {code, testId:'account-link', runId:S.id});
+    app.innerHTML = '<div class="wrap"><div class="panel lead" id="uxd" style="max-width:720px;margin:0 auto;text-align:center"><h1>در حال ارسال جواب‌ها…</h1><p>چند ثانیه صبر کن و صفحه را نبند.</p></div></div>';
+    const box = document.getElementById('uxd');
+    const opts = {code, testId:'account-link', runId:S.id};
+    if (window.UXSubmit && await UXSubmit.submit(opts)) UXDeliver.thanks(box);
+    else { box.removeAttribute('style'); box.classList.remove('lead'); UXDeliver.render(box, opts); }
   }
   return {start};
 })();

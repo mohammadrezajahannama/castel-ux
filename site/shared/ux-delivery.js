@@ -5,6 +5,8 @@
  * and this module shows the tester how to send it to the admin: share the result file (Bale, Telegram, …),
  * download it, or copy the code. The admin panel imports the file or the code.
  *
+ * This is the fallback when automatic sending (ux-submit.js) fails.
+ *
  * Usage: UXDeliver.render(element, { code, testId, runId })
  */
 (function () {
@@ -66,7 +68,7 @@
       el(
         "p",
         null,
-        "جواب‌هایت هنوز ارسال نشده‌اند. فایل نتیجه را " +
+        "جواب‌هایت خودکار ارسال نشدند (احتمالاً به خاطر اینترنت). فایل نتیجه را " +
           (CONTACT ? "در بله برای " + CONTACT : "برای کسی که لینک تست را برایت فرستاد") +
           " بفرست.",
       ),
@@ -123,6 +125,22 @@
     };
     row.appendChild(cp);
 
+    if (window.UXSubmit && UXSubmit.ready) {
+      var retry = el("button", { type: "button", class: "uxd-sub" }, "دوباره ارسال کن");
+      retry.onclick = function () {
+        retry.disabled = true;
+        msg.textContent = "در حال ارسال…";
+        UXSubmit.flush().then(function (sent) {
+          retry.disabled = false;
+          if (sent.indexOf(opts.runId) >= 0) thanks(root);
+          else msg.textContent = "باز هم ارسال نشد. اتصال اینترنت را بررسی کن، یا فایل را در بله بفرست.";
+        });
+      };
+      row.insertBefore(retry, row.firstChild);
+      box.appendChild(
+        el("p", null, "اگر الان نفرستی هم اشکالی ندارد: دفعهٔ بعد که این صفحه را باز کنی، خودش دوباره ارسال می‌کند."),
+      );
+    }
     box.appendChild(row);
     box.appendChild(msg);
     var more = el("details");
@@ -134,5 +152,14 @@
     root.appendChild(box);
   }
 
-  window.UXDeliver = { render: render };
+  // The page after a result is sent.
+  function thanks(root) {
+    root.innerHTML = "";
+    var box = el("div", { class: "uxd", style: "text-align:center" });
+    box.appendChild(el("h1", null, "ممنون! جواب‌هایت ثبت شد."));
+    box.appendChild(el("p", null, "می‌توانی این صفحه را ببندی."));
+    root.appendChild(box);
+  }
+
+  window.UXDeliver = { render: render, thanks: thanks };
 })();

@@ -2,12 +2,12 @@ import { AppHeader } from "@/components/app-header";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getAccessToken } from "@/features/auth/services";
+import { isLoggedIn } from "@/features/auth/session";
 
 // Every page under this layout needs a login.
 export const Route = createFileRoute("/_main")({
   beforeLoad: () => {
-    if (!getAccessToken()) throw redirect({ to: "/auth" });
+    if (!isLoggedIn()) throw redirect({ to: "/auth" });
   },
   component: Layout,
 });

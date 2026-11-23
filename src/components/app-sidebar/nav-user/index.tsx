@@ -1,5 +1,5 @@
 import { m } from "@/paraglide/messages.js";
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, KeyRound, LogOut } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -14,38 +14,21 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/c
 
 import { ThemeSwitcher } from "@/components/app-sidebar/nav-user/theme-switcher";
 import { LocaleSelect } from "@/components/app-sidebar/nav-user/locale-select";
-import { logout, useProfile } from "@/features/auth/services";
-import { User } from "@/features/auth/types";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from "@tanstack/react-router";
+import { getKeyFile } from "@/features/results/crypto";
 
-function UserSummary({ user }: { user?: User }) {
-  if (!user) {
-    return (
-      <>
-        <Skeleton className="size-8 rounded-lg" />
-        <div className="grid flex-1 gap-1">
-          <Skeleton className="h-3.5 w-24" />
-          <Skeleton className="h-3 w-32" />
-        </div>
-      </>
-    );
-  }
-
+function UserSummary() {
+  const kid = getKeyFile()?.kid;
   return (
     <>
-      <Avatar className="size-8 rounded-lg">
-        <AvatarImage src={user.image} alt="" className="rounded-lg" />
-        <AvatarFallback className="rounded-lg">
-          {user.firstName[0]}
-          {user.lastName[0]}
-        </AvatarFallback>
-      </Avatar>
+      <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-accent">
+        <KeyRound className="size-4" />
+      </div>
       <div className="grid flex-1 text-start text-sm leading-tight">
-        <span className="truncate font-medium">
-          {user.firstName} {user.lastName}
+        <span className="truncate font-medium">{m.admin_panel()}</span>
+        <span className="truncate text-xs" dir="ltr">
+          {m.key_id()}: {kid}
         </span>
-        <span className="truncate text-xs">{user.email}</span>
       </div>
     </>
   );
@@ -53,7 +36,7 @@ function UserSummary({ user }: { user?: User }) {
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { data: user } = useProfile();
+  const navigate = useNavigate();
 
   return (
     <SidebarMenu>
@@ -67,7 +50,7 @@ export function NavUser() {
               />
             }
           >
-            <UserSummary user={user} />
+            <UserSummary />
             <ChevronsUpDown className="ms-auto size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -78,7 +61,7 @@ export function NavUser() {
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="flex items-center gap-2 p-1.5 font-normal">
-                <UserSummary user={user} />
+                <UserSummary />
               </DropdownMenuLabel>
             </DropdownMenuGroup>
 
@@ -93,7 +76,8 @@ export function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={logout}>
+              {/* Logging out removes the key from this browser, so it asks first, on the key page. */}
+              <DropdownMenuItem onClick={() => navigate({ to: "/key" })}>
                 <LogOut />
                 {m.logout()}
               </DropdownMenuItem>
