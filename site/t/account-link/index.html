@@ -214,8 +214,8 @@ const ic = (n, c = 'currentColor', w = 2) => `<svg viewBox="0 0 24 24" fill="non
 
 /* ---------- test data (simplified for people new to the game) ---------- */
 const ACC = {
-  tg:   {k:'tg',   name:'Tomas',   plat:'تلگرام', icon:A.tg,   av:A.avTomas,   castle:12, power:'۲.۱M', troops:'۱۸K',  vip:3, coins:9100,  age:'۸ ماه'},
-  bale: {k:'bale', name:'Mohamad', plat:'بله',    icon:A.bale, av:A.avMohamad, castle:8,  power:'۹۸۰K', troops:'۶.۴K', vip:1, coins:10000, age:'۱۲ ماه'}
+  tg:   {k:'tg',   name:'Tomas',   plat:'تلگرام', icon:A.tg,   av:A.avTomas,   castle:12, power:'۲.۱M', troops:'۱۸K',  vip:3, coins:9100,  skins:4, builders:1, queues:1, age:'۸ ماه'},
+  bale: {k:'bale', name:'Mohamad', plat:'بله',    icon:A.bale, av:A.avMohamad, castle:8,  power:'۹۸۰K', troops:'۶.۴K', vip:1, coins:10000, skins:2, builders:2, queues:2, age:'۱۲ ماه'}
 };
 const other = k => k === 'tg' ? 'bale' : 'tg';
 const SC_NAME = {a:'A · مرحله‌به‌مرحله', b:'B · پیش‌نمایش نتیجه', c:'C · تأیید آگاهانه'};
@@ -270,7 +270,7 @@ const bridge = c => frame({id:'bridge', title:'', body:`<div class="guide"><span
 function s3(c) {
   const t = ACC.tg, m = ACC.bale;
   if (c.sc === 'b') {
-    const tile = (a, lb, gold) => `<div class="tile"><span class="cap" style="font-weight:700;color:${gold ? '#fad08c' : '#aeaeae'}">${lb}</span><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح قلعه ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}</div>`;
+    const tile = (a, lb, gold) => `<div class="tile"><span class="cap" style="font-weight:700;color:${gold ? '#fad08c' : '#aeaeae'}">${lb}</span><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}</div>`;
     return frame({id:'s3', title:'اتصال حساب', sm:true, gap:'g12', body:`<p class="h">این لینک دو حساب را به هم وصل می‌کند</p>
     <div class="row" style="align-items:stretch">${tile(t, 'حسابی که الان در آن هستید', 1)}${tile(m, 'حسابی که لینک را ساخته')}</div>
     <div class="arrow">${ic('arrowDown', '#ff9533')}</div>
@@ -289,7 +289,7 @@ function s4(c) {
     const tile = a => {
       const st = !sel ? '' : sel === a.k ? 'sel' : '';
       const tg = !sel ? '' : sel === a.k ? tag('keep', 'می‌ماند') : tag('rem', 'حذف می‌شود');
-      return `<div class="tile ${st}" data-act="pick-${a.k}" role="button" style="cursor:pointer"><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح قلعه ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}${tg}</div>`;
+      return `<div class="tile ${st}" data-act="pick-${a.k}" role="button" style="cursor:pointer"><img class="av" src="${a.av}" alt=""><div class="nm">${a.name}</div><div class="cap">سطح ${FA(a.castle)} · قدرت ${a.power}</div>${pl(a)}${tg}</div>`;
     };
     let res;
     if (sel) {
@@ -297,10 +297,9 @@ function s4(c) {
       const d = (v, delta) => `<b>${v}</b>${delta ? `<span class="delta">${ic('up', '#3aa750', 2.5)}${delta}</span>` : '<span class="same">بدون تغییر</span>'}`;
       const vipDelta = Math.max(K.vip, R.vip) - K.vip;
       res = `<div class="card" style="border:2px solid #fad08c;padding:11px;gap:8px"><div class="row">${tag('gold', 'حساب شما بعد از اتصال')}</div>
-      <div class="row" style="gap:12px"><img class="av" src="${K.av}" alt=""><div class="grow"><div class="nm">${K.name}</div><div class="cap">سرور ۴</div></div><span class="pill"><img src="${A.tg}" alt="">تلگرام</span><span class="pill"><img src="${A.bale}" alt="">بله</span></div>
-      <div class="stats c2"><div class="stat"><i>سطح VIP</i>${d(FA(Math.max(K.vip, R.vip)), vipDelta ? FA(vipDelta) : 0)}</div><div class="stat"><i>سکه</i>${d(nf(K.coins + R.coins), nf(R.coins))}</div>
-      <div class="stat"><i>سطح قلعه</i>${d(FA(K.castle), 0)}</div><div class="stat"><i>قدرت</i>${d(K.power, 0)}</div></div></div>
-      ${note('warn', 'از دست می‌رود', [`قلعه، ساختمان‌ها، نیروها و منابع ${R.name} (قدرت ${R.power})`])}`;
+      <div class="row" style="gap:12px"><img class="av" src="${K.av}" alt=""><div class="grow"><div class="nm">${K.name}</div><div class="cap">سطح ${FA(K.castle)} · سرور ۴</div></div><span class="pill"><img src="${A.tg}" alt="">تلگرام</span><span class="pill"><img src="${A.bale}" alt="">بله</span></div>
+      <div class="stats"><div class="stat"><i>VIP</i>${d(FA(Math.max(K.vip, R.vip)), vipDelta ? FA(vipDelta) : 0)}</div><div class="stat"><i>سکه</i>${d(nf(K.coins + R.coins), nf(R.coins))}</div><div class="stat"><i>اسکین</i>${d(FA(K.skins + R.skins), FA(R.skins))}</div>
+      <div class="stat"><i>صف لشکرکشی</i>${d(FA(Math.max(K.queues, R.queues)), Math.max(K.queues, R.queues) - K.queues ? FA(Math.max(K.queues, R.queues) - K.queues) : 0)}</div><div class="stat"><i>سازنده</i>${d(FA(Math.max(K.builders, R.builders)), Math.max(K.builders, R.builders) - K.builders ? FA(Math.max(K.builders, R.builders) - K.builders) : 0)}</div><div class="stat"><i>قدرت</i>${d(K.power, 0)}</div></div></div>`;
     } else {
       res = `<div class="card" style="border-style:dashed;align-items:center;text-align:center;padding:24px 12px"><span class="p">یک حساب را انتخاب کنید تا ببینید بعد از اتصال چه چیزی می‌ماند.</span></div>`;
     }
@@ -315,17 +314,25 @@ function s4(c) {
   return frame({id:'s4', title:'انتخاب حساب', sm:c.sc === 'c', gap:'g12', body:`${stepper(2)}<div class="col4"><p class="h">پیشرفت کدام حساب بماند؟</p><p class="p">قلعه، نیروها و منابع حساب دیگر حذف می‌شود.</p></div>
   ${card(ACC.tg)}${card(ACC.bale)}
   <div class="note" style="border-color:#927f61"><div class="tt" style="color:#fad08c">${ic('merge', '#fad08c')}<span>این موارد در هر حالت در حسابی که انتخاب می‌کنید جمع می‌شوند</span></div>
-  <div class="row" style="flex-wrap:wrap;gap:4px"><span class="chip">${ic('check', '#3aa750')}سطح VIP بالاتر: ۳</span><span class="chip">${ic('check', '#3aa750')}۱۹٬۱۰۰ سکه (جمع هر دو)</span></div></div>`,
+  <div class="row" style="flex-wrap:wrap;gap:4px">${['سطح VIP بالاتر: ۳', '۱۹٬۱۰۰ سکه (جمع هر دو)', 'همهٔ اسکین‌ها (۶)', 'صف لشکرکشی اضافه', 'سازندهٔ دوم'].map(t => `<span class="chip">${ic('check', '#3aa750')}${t}</span>`).join('')}</div></div>`,
   foot:btn(sel ? 'ادامه' : 'یک حساب را انتخاب کنید', 'gold', 'to-s5', {icon:sel ? 'arrowLeft' : null, dis:!sel}) + btn('انصراف', 'ghost', 'cancel')});
 }
 
+// What the kept account K gets from R, e.g. "۱۰٬۰۰۰ سکه، ۲ اسکین، صف لشکرکشی اضافه و سازندهٔ دوم".
+function gains(K, R) {
+  const g = [nf(R.coins) + ' سکه', FA(R.skins) + ' اسکین'];
+  if (R.vip > K.vip) g.push('سطح VIP بالاتر');
+  if (R.queues > K.queues) g.push('صف لشکرکشی اضافه');
+  if (R.builders > K.builders) g.push('سازندهٔ دوم');
+  return g.slice(0, -1).join('، ') + ' و ' + g[g.length - 1];
+}
 function s5(c) {
   const K = ACC[c.sel || 'tg'], R = ACC[other(c.sel || 'tg')];
   if (c.sc === 'b') {
     const item = (bg, icn, col, t, sub, tc, extra) => `<div class="row" style="gap:12px;align-items:flex-start;${extra || ''}"><span class="badge" style="background:${bg}">${ic(icn, col)}</span><div class="grow"><div class="lbl" style="color:${tc || '#fff'}">${t}</div><p class="p">${sub}</p></div></div>`;
-    return frame({id:'s5', title:'تأیید نهایی', sm:true, body:`<div class="col4"><p class="h">قبل از اتصال، یک بار دیگر بخوانید</p><p class="p">با تأیید اتصال، این اتفاق‌ها می‌افتد:</p></div>
+    return frame({id:'s5', title:'تأیید نهایی', sm:true, body:`<div class="col4"><p class="h">قبل از اتصال، یک بار دیگر بخوانید</p><p class="p">با تایید اتصال، این اتفاق‌ها می‌افتد:</p></div>
     <div class="card" style="padding:16px;gap:16px">${item('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند`, 'از این به بعد در تلگرام و بله باز می‌شود.')}<div class="div"></div>
-    ${item('#4f422d', 'merge', '#fad08c', `این‌ها از ${R.name} به ${K.name} اضافه می‌شود`, 'سکه‌ها و سطح VIP بالاتر')}<div class="div"></div>
+    ${item('#4f422d', 'merge', '#fad08c', `این‌ها از ${R.name} به ${K.name} اضافه می‌شود`, gains(K, R))}<div class="div"></div>
     ${item('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} حذف می‌شود`, 'قلعه، ساختمان‌ها، نیروها و منابعش پاک می‌شود.', '#ff9533')}
     ${item('#8d1f1f', 'noUndo', '#fff', 'این کار برگشت ندارد', 'بعد از اتصال نمی‌توانید حساب‌ها را از هم جدا کنید.', '#e8313f', 'border:1px solid #df403d;border-radius:8px;padding:12px')}</div>`,
     foot:`<div class="hold" id="hold" role="button" tabindex="0"><div class="fill"></div>${ic('touch', '#fff')}<span>برای اتصال، دکمه را ۲ ثانیه نگه دارید</span></div>` + btn('انصراف', 'ghost', 'cancel')});
@@ -336,16 +343,16 @@ function s5(c) {
     const chk = (i, t) => `<button class="chk ${c.checks[i] ? 'on' : ''}" data-act="chk-${i}"><span class="box">${c.checks[i] ? ic('check', '#000', 2.5) : ''}</span><span>${t}</span></button>`;
     return frame({id:'s5', title:'تأیید نهایی', sm:true, gap:'g12', body:`${stepper(3)}<p class="h">آخرین بررسی</p>
     <div class="card">${line('#1f8d35', 'checkCircle', '#fff', `حساب ${K.name} می‌ماند و در تلگرام و بله باز می‌شود.`)}<div class="div"></div>
-    ${line('#4f422d', 'merge', '#fad08c', `سطح VIP بالاتر و سکه‌ها از ${R.name} به ${K.name} منتقل می‌شود.`)}<div class="div"></div>
+    ${line('#4f422d', 'merge', '#fad08c', `سطح VIP بالاتر، سکه‌ها، اسکین‌ها، صف لشکرکشی اضافه و سازندهٔ دوم از ${R.name} به ${K.name} منتقل می‌شود.`)}<div class="div"></div>
     ${line('#4d2e14', 'trash', '#ff9533', `حساب ${R.name} با قلعه، نیروها و منابعش حذف می‌شود.`, '#ff9533')}</div>
     <p class="p">برای فعال شدن دکمه، هر سه مورد را تیک بزنید.</p>
     ${chk(0, 'می‌دانم این کار برگشت ندارد.')}${chk(1, 'می‌دانم بعد از اتصال نمی‌توانم حساب‌ها را از هم جدا کنم.')}${chk(2, `می‌دانم حساب ${R.name} دیگر برنمی‌گردد.`)}`,
     foot:btn('اتصال و حذف ' + R.name, 'red', 'confirm', {dis:!all}) + btn('انصراف', 'ghost', 'cancel')});
   }
-  return frame({id:'s5', title:'تأیید نهایی', gap:'g12', body:`${stepper(3)}<p class="h">مطمئن هستید؟</p>
+  return frame({id:'s5', title:'تأیید نهایی', gap:'g12', body:`${stepper(3)}<p class="h">از انتخاب خود اطمینان دارید؟</p>
   <div class="card"><div class="row"><span class="p grow" style="color:#fff">حساب ${K.name} در تلگرام و بله باز می‌شود.</span>${tag('keep', 'می‌ماند')}</div><div class="div"></div>
-  <div class="row"><span class="p grow" style="color:#fff">حساب ${R.name} با قلعه، ساختمان‌ها، نیروها و منابعش.</span>${tag('rem', 'حذف می‌شود')}</div></div>
-  <div class="col"><p class="lbl">از ${R.name} به ${K.name} منتقل می‌شود</p>${['سطح VIP بالاتر', 'سکه‌ها'].map(t => `<div class="row">${ic('check', '#3aa750')}<span class="p">${t}</span></div>`).join('').replace(/<svg /g, '<svg style="width:16px;height:16px" ')}</div>
+  <div class="row"><span class="p grow" style="color:#fff">حساب ${R.name} با قلعه، ساختمان‌ها، نیروها و منابعش حذف می‌شود.</span>${tag('rem', 'حذف می‌شود')}</div></div>
+  <div class="col"><p class="lbl">موارد زیر از ${R.name} به ${K.name} منتقل می‌شوند</p>${['سطح VIP بالاتر', 'سکه‌ها', 'اسکین‌های آزادشده', 'صف لشکرکشی اضافه و سازندهٔ دوم'].map(t => `<div class="row">${ic('check', '#3aa750')}<span class="p">${t}</span></div>`).join('').replace(/<svg /g, '<svg style="width:16px;height:16px" ')}</div>
   ${note('danger', 'این کار برگشت ندارد', [`بعد از اتصال نمی‌توانید حساب‌ها را از هم جدا کنید یا ${R.name} را برگردانید.`])}`,
   foot:btn('اتصال و حذف ' + R.name, 'red', 'confirm') + btn('انصراف', 'ghost', 'cancel')});
 }
