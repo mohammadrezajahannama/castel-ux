@@ -214,8 +214,8 @@ const ic = (n, c = 'currentColor', w = 2) => `<svg viewBox="0 0 24 24" fill="non
 
 /* ---------- test data (simplified for people new to the game) ---------- */
 const ACC = {
-  tg:   {k:'tg',   name:'Taha',    plat:'تلگرام', icon:A.tg,   av:A.avTaha,   castle:12, power:'۲٫۱ میلیون', troops:'۱۸ هزار',  vip:3, coins:9100,  skins:4, builders:1, queues:1, age:'۸ ماه'},
-  bale: {k:'bale', name:'Bardia',  plat:'بله',    icon:A.bale, av:A.avBardia, castle:8,  power:'۹۸۰ هزار', troops:'۶٫۴ هزار', vip:1, coins:10000, skins:2, builders:2, queues:2, age:'۱۲ ماه'}
+  tg:   {k:'tg',   name:'Taha-telegram',    plat:'تلگرام', icon:A.tg,   av:A.avTaha,   castle:12, power:'۲٫۱ میلیون', troops:'۱۸ هزار',  vip:3, coins:9100,  skins:4, builders:1, queues:1, age:'۸ ماه'},
+  bale: {k:'bale', name:'Taha-bale',  plat:'بله',    icon:A.bale, av:A.avBardia, castle:8,  power:'۹۸۰ هزار', troops:'۶٫۴ هزار', vip:1, coins:10000, skins:2, builders:2, queues:2, age:'۱۲ ماه'}
 };
 const other = k => k === 'tg' ? 'bale' : 'tg';
 const SC_NAME = {a:'A · مرحله‌به‌مرحله', b:'B · پیش‌نمایش نتیجه', c:'C · تأیید آگاهانه'};
@@ -254,12 +254,12 @@ function s2(c) {
     return frame({id:'s2', title:'حساب‌ها', body:s1Body(), sm:true, over:`<div class="dim"></div><div class="sheet sm"><div class="handle"></div><p class="h">لینک اتصال به تلگرام</p>
     <p class="p">لینک را کپی کنید و در «پیام‌های ذخیره‌شده» تلگرام برای خودتان بفرستید. آن را همان‌جا باز کنید تا پیش از تأیید، نتیجهٔ اتصال را ببینید.</p>
     <div><div class="big"><bdi dir="ltr" class="cd">${c.cd}</bdi></div><div class="cap" style="text-align:center">زمان باقی‌ماندهٔ لینک</div></div>${linkBox()}
-    ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
+    ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Taha-bale را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
     ${btn('کپی لینک', 'gold', 'copy', {icon:'copy'})}${btn('بستن', 'ghost', 'back-s1')}</div>`});
   }
   return frame({id:'s2', title:'اتصال به تلگرام', sm:c.sc === 'c', body:`<div class="col"><p class="h">لینک را در تلگرام باز کنید</p><p class="p">لینک را کپی کنید و در «پیام‌های ذخیره‌شده» تلگرام برای خودتان بفرستید. آن را همان‌جا باز کنید تا حساب‌ها را ببینید و اتصال را ادامه دهید.</p></div>
   <div class="col">${linkBox()}<div class="row" style="justify-content:center">${timer(c.cd)}</div></div>
-  ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Bardia را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
+  ${note('danger', 'لینک را برای کسی نفرستید', ['هر کس این لینک را باز کند، می‌تواند حساب Taha-bale را به حساب تلگرام خودش وصل کند. برای این کار، تأیید دوباره در بله لازم نیست.'])}
   ${note('info', 'اگر مهلت ۱۰ دقیقه‌ای لینک تمام شد', ['از همین صفحه می‌توانید لینک تازه‌ای بسازید.'])}`,
   foot:btn('کپی لینک', 'gold', 'copy', {icon:'copy'}) + btn('انصراف', 'ghost', 'back-s1')});
 }
@@ -426,7 +426,7 @@ const Test = (() => {
     <p>این تست حدود ۵ دقیقه طول می‌کشد. می‌خواهیم ببینیم کار با صفحه‌ها چطور پیش می‌رود. اگر جایی مکث کردی یا چیزی برایت روشن نبود، همین برایمان مهم است.</p>
     <p>با یک نسخهٔ آزمایشی کار می‌کنی. حساب‌های واقعی تغییری نمی‌کنند.</p>
     <div class="goal"><p style="margin:0 0 8px">Castel یک بازی استراتژی است که می‌شود در بله و تلگرام بازی‌اش کرد.</p>
-    <p style="margin:0 0 8px">فرض کن دو حساب بازی داری. حساب <b>Bardia</b> در <b>بله</b> است و حساب <b>Taha</b> در <b>تلگرام</b>.</p>
+    <p style="margin:0 0 8px">فرض کن دو حساب بازی داری. حساب <b>Taha-bale</b> در <b>بله</b> است و حساب <b>Taha-telegram</b> در <b>تلگرام</b>.</p>
     <p style="margin:0">می‌خواهی در هر دو پیام‌رسان با یک حساب بازی کنی و <b>قلعهٔ قوی‌ترت را نگه داری.</b></p></div>
     <p>از صفحهٔ «حساب‌ها» در بله شروع کن. هر وقت فکر کردی به هدفت رسیده‌ای یا خواستی تست را متوقف کنی، همان‌جا بایست.</p>
     <button class="cta" id="go">شروع تست</button></div></div>`;
@@ -445,7 +445,7 @@ const Test = (() => {
   }
   function stage() {
     app.innerHTML = `<div class="wrap"><div class="stage"><aside class="side panel"><h2>هدف تو</h2>
-    <p style="color:#d4d3d6;margin:0 0 12px"><b>Bardia</b> در بله است و <b>Taha</b> در تلگرام. می‌خواهی در هر دو پیام‌رسان با یک حساب بازی کنی و <b style="color:#fad08c">قلعهٔ قوی‌ترت را نگه داری.</b></p>
+    <p style="color:#d4d3d6;margin:0 0 12px"><b>Taha-bale</b> در بله است و <b>Taha-telegram</b> در تلگرام. می‌خواهی در هر دو پیام‌رسان با یک حساب بازی کنی و <b style="color:#fad08c">قلعهٔ قوی‌ترت را نگه داری.</b></p>
     <p class="small">با صفحه همان‌طور کار کن که با گوشی‌ات کار می‌کنی. لازم نیست عجله کنی.</p></aside>
     <div class="phonebox" id="pbox"><div class="phone" id="phone"></div></div></div></div>`;
     phoneEl = document.getElementById('phone');
@@ -603,7 +603,7 @@ const Test = (() => {
 /* =================================================================== */
 const Admin = (() => {
   let myUid = null, ALL = [], local = [], F = {sc:'all', dev:'all', st:'all'}, tab = 'overview', sel = null, hm = {sc:'a', screen:'s4', dev:'all', kind:'click'}, loadT, unsub;
-  const ACT = {'connect-tg':'اتصال تلگرام','connect-eitaa':'اتصال ایتا','copy':'کپی لینک','back-s1':'انصراف یا بستن','open-link':'باز کردن لینک','to-s4':'ادامه به انتخاب','pick-tg':'انتخاب Taha','pick-bale':'انتخاب Bardia','to-s5':'ادامه به تأیید','to-s5:disabled':'ادامهٔ غیرفعال','chk-0':'تیک ۱','chk-1':'تیک ۲','chk-2':'تیک ۳','confirm':'اتصال و حذف','confirm:disabled':'اتصال (غیرفعال)','cancel':'انصراف','hold':'نگه داشتن دکمه','restart':'دوباره امتحان','end-cancel':'پایان تسک','to-questions':'رفتن به سؤال‌ها'};
+  const ACT = {'connect-tg':'اتصال تلگرام','connect-eitaa':'اتصال ایتا','copy':'کپی لینک','back-s1':'انصراف یا بستن','open-link':'باز کردن لینک','to-s4':'ادامه به انتخاب','pick-tg':'انتخاب Taha-telegram','pick-bale':'انتخاب Taha-bale','to-s5':'ادامه به تأیید','to-s5:disabled':'ادامهٔ غیرفعال','chk-0':'تیک ۱','chk-1':'تیک ۲','chk-2':'تیک ۳','confirm':'اتصال و حذف','confirm:disabled':'اتصال (غیرفعال)','cancel':'انصراف','hold':'نگه داشتن دکمه','restart':'دوباره امتحان','end-cancel':'پایان تسک','to-questions':'رفتن به سؤال‌ها'};
   const actName = a => ACT[a] || a || 'جای خالی';
   let impMsg = '';
   const ANS = {deleted:'حذف شد', transfer_kept:'منتقل شد و هنوز هست', unchanged:'بدون تغییر', coins:'سکه', castle:'قلعه', troops:'نیروها', settings:'بله، از تنظیمات', support:'بله، با پشتیبانی', no:'نه', nothing:'هیچ', see:'فقط می‌بیند', connect:'وصل می‌کند', dk:'نمی‌دانم'};
@@ -777,7 +777,7 @@ const Admin = (() => {
     document.getElementById('hinfo').innerHTML = `<div class="qblock"><h3>${SC_NAME[hm.sc]} · ${SCREENS.find(s => s[0] === hm.screen)[1]}</h3>
       <p class="mini">${FA(rows.filter(r => (r.reached || []).includes(hm.screen)).length)} نفر این صفحه را دیده‌اند · ${FA(clicksHere.length)} کلیک و لمس${hm.kind === 'move' ? ' · حرکت ماوس فقط از دسکتاپ' : ''}</p>
       ${hm.kind === 'click' ? `<table><thead><tr><th>روی چه زده‌اند</th><th>تعداد</th></tr></thead><tbody>${Object.entries(acts).sort((a, b) => b[1] - a[1]).map(([a, n]) => `<tr style="cursor:default"><td>${esc(a)}</td><td class="n">${FA(n)}</td></tr>`).join('') || '<tr><td colspan="2" class="mini">کلیکی نیست.</td></tr>'}</tbody></table>` : ''}
-      <p class="mini">فیلتر دستگاه بالای صفحه روی هیت‌مپ هم اثر دارد. پس‌زمینه حالت اول صفحه است${hm.screen === 's5' ? ' (با انتخاب Taha)' : ''}.</p></div>`;
+      <p class="mini">فیلتر دستگاه بالای صفحه روی هیت‌مپ هم اثر دارد. پس‌زمینه حالت اول صفحه است${hm.screen === 's5' ? ' (با انتخاب Taha-telegram)' : ''}.</p></div>`;
   }
   function rowsTab(v) {
     const rows = data().sort((a, b) => b.startedAt - a.startedAt);
