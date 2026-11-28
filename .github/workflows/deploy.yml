@@ -27,7 +27,7 @@ jobs:
       - name: Build site
         run: ./scripts/build-site.sh
         env:
-          SITE_BASE: /${{ github.event.repository.name }}/
+          SITE_BASE: /
           # Lets test pages post results to castel-ux-results (Issues: read and write on that repo only).
           UX_SUBMIT_TOKEN: ${{ secrets.UX_SUBMIT_TOKEN }}
       - uses: actions/upload-pages-artifact@v3
